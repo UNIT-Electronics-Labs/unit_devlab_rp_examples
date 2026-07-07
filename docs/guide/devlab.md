@@ -1,105 +1,250 @@
-# Usar DevLab
+# Configuración del SDK para RP2040
 
-DevLab es el flujo principal de este repositorio para compilar y cargar ejemplos FPGA sin depender de `make`. Cada ejemplo contiene un archivo `devlab.toml` y, cuando aplica, un `devlab-vhdl.toml`.
+Esta guía te ayudará a configurar el entorno de desarrollo para programar el RP2040 en C y ensamblador.
 
 ## Requisitos
 
-- Node.js 22+ para la documentación VitePress.
-- Python 3.11+ para DevLab.
-- `devlab-fpga` instalado.
-- OSS CAD Suite instalado desde DevLab.
-- Una tarjeta con FPGA Gowin compatible conectada por USB para cargar el bitstream.
-- **Windows**: 7-Zip instalado para extraer toolchains.
+- **CMake** 3.13 o superior
+- **Compilador ARM GCC** (arm-none-eabi-gcc)
+- **Pico SDK** (pico-sdk)
+- **Node.js** 18+ (opcional, para documentación VitePress)
+- Placa con RP2040 (Raspberry Pi Pico, Pico W, etc.)
+- Cable USB para programación
 
-## Instalar DevLab
+## Instalación en Linux
+
+### Ubuntu/Debian
 
 ```bash
-pip install devlab-fpga
-devlab install
+# Instalar dependencias
+sudo apt update
+sudo apt install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi \
+  build-essential libstdc++-arm-none-eabi-newlib git
+
+# Clonar el SDK de Pico
+cd ~
+git clone https://github.com/raspberrypi/pico-sdk.git
+cd pico-sdk
+git submodule update --init
+
+# Configurar variable de entorno
+echo 'export PICO_SDK_PATH=$HOME/pico-sdk' >> ~/.bashrc
+source ~/.bashrc
 ```
 
-## Configuración Adicional para Windows
+### Fedora/RHEL
 
-Windows Defender puede interferir con las herramientas de síntesis y ralentizar el proceso de compilación. Se recomienda configurar exclusiones antes de instalar DevLab.
+```bash
+sudo dnf install cmake arm-none-eabi-gcc-cs arm-none-eabi-newlib git
 
-::: tip Guía Detallada para Windows
-Para instrucciones completas con capturas de pantalla, consulta la [Guía para Windows](./windows.md).
-:::
+cd ~
+git clone https://github.com/raspberrypi/pico-sdk.git
+cd pico-sdk
+git submodule update --init
 
-### Configurar Driver USB con Zadig (Obligatorio)
-
-Para programar la FPGA en Windows, necesitas instalar el driver USB correcto:
-
-1. Descarga Zadig desde [https://zadig.akeo.ie/](https://zadig.akeo.ie/)
-2. Conecta tu FPGA (Tang Nano 9K u otra)
-3. Ejecuta Zadig y activa **Options → List All Devices**
-4. Selecciona tu dispositivo FPGA ("JTAG Debugger" o "USB-JTAG")
-5. Selecciona **WinUSB** o **libusbK** como driver
-6. Haz clic en **Replace Driver** o **Install Driver**
-
-::: warning
-Sin este driver, `devlab flash` no funcionará. Este paso es obligatorio.
-:::
-
-### Instalar 7-Zip
-
-DevLab requiere 7-Zip para extraer los toolchains:
-
-```powershell
-winget install 7zip.7zip
+echo 'export PICO_SDK_PATH=$HOME/pico-sdk' >> ~/.bashrc
+source ~/.bashrc
 ```
 
-### Instalar DevLab con Python
+## Instalación en macOS
 
-En Windows, usa el módulo Python explícitamente:
+```bash
+# Instalar Homebrew si no lo tienes
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-```powershell
-python -m pip install --upgrade devlab-fpga
-python -m devlab install --force
-python -m devlab install-ghdl
+# Instalar herramientas
+brew install cmake
+brew tap ArmMbed/homebrew-formulae
+brew install arm-none-eabi-gcc
+
+# Clonar el SDK
+cd ~
+git clone https://github.com/raspberrypi/pico-sdk.git
+cd pico-sdk
+git submodule update --init
+
+echo 'export PICO_SDK_PATH=$HOME/pico-sdk' >> ~/.zshrc
+source ~/.zshrc
 ```
 
-### Configurar Exclusiones de Windows Defender
+## Instalación en Windows
 
-Ejecuta PowerShell como **Administrador** y agrega las siguientes exclusiones para evitar que Windows Defender escanee los ejecutables de las herramientas FPGA:
+Consulta la [Guía para Windows](./windows.md) para instrucciones detalladas.
 
-```powershell
-# Define las rutas de los toolchains
-$oss="$env:USERPROFILE\.devlab\toolchains\oss-cad-suite-2026-07-06-windows-x64\oss-cad-suite\bin"
-$ghdl="$env:USERPROFILE\.devlab\toolchains\ghdl-6.0.0-windows-x64\bin"
+## Herramientas Opcionales
 
-# Agrega exclusiones de procesos
-Add-MpPreference -ExclusionProcess "$oss\yosys.exe"
-Add-MpPreference -ExclusionProcess "$oss\nextpnr-himbaechel.exe"
-Add-MpPreference -ExclusionProcess "$oss\gowin_pack.exe"
-Add-MpPreference -ExclusionProcess "$oss\openFPGALoader.exe"
-Add-MpPreference -ExclusionProcess "$ghdl\ghdl.exe"
+### picotool
 
-# Agrega exclusión de la carpeta completa
-Add-MpPreference -ExclusionPath "$env:USERPROFILE\.devlab"
+Herramienta para cargar programas sin modo BOOTSEL:
+
+```bash
+# Linux
+git clone https://github.com/raspberrypi/picotool.git
+cd picotool
+mkdir build && cd build
+cmake ..
+make
+sudo make install
 ```
 
-::: warning Nota de Seguridad
-Las exclusiones de Windows Defender reducen la protección del sistema. Solo agrega estas exclusiones si confías en las herramientas de DevLab.
-:::
+### minicom o screen
 
-### Verificar la Instalación
+Para comunicación serial:
 
-```powershell
-python -m devlab --version
-python -m devlab doctor
+```bash
+# Linux
+sudo apt install minicom
+# o
+sudo apt install screen
+
+# Usar
+minicom -D /dev/ttyACM0 -b 115200
+# o
+screen /dev/ttyACM0 115200
 ```
 
-### Usar DevLab en Windows
+## Compilar un Ejemplo
 
-Una vez instalado, usa `python -m devlab` en lugar de solo `devlab`:
-
-```powershell
-python -m devlab build
-python -m devlab flash
+```bash
+cd ejemplo_proyecto
+mkdir build
+cd build
+cmake ..
+make
 ```
 
-## Compilar Verilog
+Esto genera un archivo `.uf2` listo para cargar.
+
+## Cargar el Programa
+
+### Método 1: Modo BOOTSEL (más simple)
+
+1. Desconecta la placa
+2. Mantén presionado el botón BOOTSEL
+3. Conecta el USB (manteniendo BOOTSEL)
+4. Suelta BOOTSEL
+5. La placa aparece como unidad de almacenamiento
+6. Copia el archivo `.uf2`
+
+### Método 2: Con picotool
+
+```bash
+picotool load -f programa.uf2
+picotool reboot
+```
+
+## Verificar Instalación
+
+```bash
+# Verificar compilador
+arm-none-eabi-gcc --version
+
+# Verificar CMake
+cmake --version
+
+# Verificar SDK
+echo $PICO_SDK_PATH
+```
+
+## Crear Proyecto Nuevo
+
+### 1. Crear estructura de directorios
+
+```bash
+mkdir mi_proyecto
+cd mi_proyecto
+```
+
+### 2. Copiar pico_sdk_import.cmake
+
+```bash
+cp $PICO_SDK_PATH/external/pico_sdk_import.cmake .
+```
+
+### 3. Crear CMakeLists.txt
+
+```cmake
+cmake_minimum_required(VERSION 3.13)
+include(pico_sdk_import.cmake)
+
+project(mi_proyecto C CXX ASM)
+set(CMAKE_C_STANDARD 11)
+
+pico_sdk_init()
+
+add_executable(mi_proyecto
+    main.c
+)
+
+target_link_libraries(mi_proyecto
+    pico_stdlib
+)
+
+pico_add_extra_outputs(mi_proyecto)
+pico_enable_stdio_usb(mi_proyecto 1)
+pico_enable_stdio_uart(mi_proyecto 0)
+```
+
+### 4. Crear main.c
+
+```c
+#include "pico/stdlib.h"
+
+int main() {
+    const uint LED_PIN = 25;
+    gpio_init(LED_PIN);
+    gpio_set_dir(LED_PIN, GPIO_OUT);
+    
+    while (true) {
+        gpio_put(LED_PIN, 1);
+        sleep_ms(500);
+        gpio_put(LED_PIN, 0);
+        sleep_ms(500);
+    }
+}
+```
+
+### 5. Compilar
+
+```bash
+mkdir build && cd build
+cmake ..
+make
+```
+
+## Solución de Problemas
+
+### SDK no encontrado
+
+```bash
+# Verificar que PICO_SDK_PATH esté configurado
+echo $PICO_SDK_PATH
+
+# Si está vacío, configurar
+export PICO_SDK_PATH=/ruta/a/pico-sdk
+```
+
+### Error de compilador
+
+```bash
+# Verificar que arm-none-eabi-gcc esté en PATH
+which arm-none-eabi-gcc
+
+# Si no se encuentra, instalar
+sudo apt install gcc-arm-none-eabi
+```
+
+### Puerto serial no aparece
+
+```bash
+# Linux: agregar usuario al grupo dialout
+sudo usermod -a -G dialout $USER
+# Cerrar sesión y volver a entrar
+
+# macOS: no requiere permisos adicionales
+
+# Windows: verificar drivers USB en Device Manager
+```
 
 ```bash
 cd digital-labs/01_sumador_n_bits

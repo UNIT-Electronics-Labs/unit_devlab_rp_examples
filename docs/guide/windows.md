@@ -1,231 +1,287 @@
-# Guía Rápida para Windows 
+# Guía para Windows - RP2040
 
-Esta guía proporciona pasos específicos para configurar DevLab en Windows y evitar problemas comunes.
+Esta guía proporciona pasos específicos para configurar el entorno de desarrollo RP2040 en Windows.
 
 ## Instalación Rápida
 
-### 1. Instalar Requisitos
+### 1. Instalar Herramientas Básicas
+
+#### Opción A: Instalador Automático (Recomendado)
+
+Raspberry Pi proporciona un instalador automático para Windows:
+
+1. Descarga el [Pico Setup para Windows](https://github.com/raspberrypi/pico-setup-windows/releases/latest)
+2. Ejecuta el instalador `pico-setup-windows-x64-standalone.exe`
+3. Sigue el asistente (instalará CMake, ARM GCC, Build Tools, Git, Python, VS Code)
+4. Reinicia el sistema cuando termine
+
+#### Opción B: Instalación Manual
 
 ```powershell
-# Instalar 7-Zip (requerido para extraer toolchains)
-winget install 7zip.7zip
+# Instalar CMake
+winget install Kitware.CMake
 
-# Verificar que Python 3.11+ esté instalado
-python --version
+# Instalar Build Tools para Visual Studio
+winget install Microsoft.VisualStudio.2022.BuildTools
+
+# Instalar Git
+winget install Git.Git
+
+# Instalar Python
+winget install Python.Python.3.11
 ```
 
-::: tip Descarga Zadig
-Descarga Zadig desde [https://zadig.akeo.ie/](https://zadig.akeo.ie/) antes de continuar.
-:::
+### 2. Instalar ARM GCC
 
-### 2. Configurar Driver USB con Zadig
+Descarga e instala ARM GCC desde:
+[https://developer.arm.com/downloads/-/gnu-rm](https://developer.arm.com/downloads/-/gnu-rm)
 
-**Antes de instalar DevLab**, necesitas configurar el driver USB para la FPGA usando Zadig.
+1. Descarga el instalador Windows (.exe)
+2. Ejecuta el instalador
+3. **Importante**: Marca la opción "Add path to environment variable"
 
-1. Descarga Zadig desde [https://zadig.akeo.ie/](https://zadig.akeo.ie/)
-2. Conecta tu tarjeta FPGA (Tang Nano 9K u otra) al puerto USB
-3. Ejecuta Zadig
-4. En el menú **Options**, activa **List All Devices**
-5. Selecciona tu dispositivo FPGA de la lista desplegable
-   - Para Tang Nano 9K: busca "JTAG Debugger" o "USB-JTAG"
-6. Selecciona el driver **WinUSB** o **libusbK** en la lista de la derecha
-7. Haz clic en **Replace Driver** o **Install Driver**
-8. Espera a que la instalación termine
-
-![Configuración de Zadig](./img/zadig_changew.png)
-*Zadig mostrando la instalación exitosa del driver WinUSB para JTAG Debugger*
-
-::: warning Importante
-Sin el driver WinUSB/libusbK, openFPGALoader no podrá comunicarse con la FPGA. Este paso es **obligatorio** en Windows.
-:::
-
-### 3. Instalar DevLab
+### 3. Clonar el Pico SDK
 
 ```powershell
-# Actualizar pip
-python -m pip install --upgrade pip
+# Crear directorio de desarrollo
+cd $env:USERPROFILE
+mkdir pico
+cd pico
 
-# Instalar DevLab
-python -m pip install --upgrade devlab-fpga
+# Clonar SDK
+git clone https://github.com/raspberrypi/pico-sdk.git
+cd pico-sdk
+git submodule update --init
 
-# Instalar toolchains
-python -m devlab install --force
-python -m devlab install-ghdl
-
-# Verificar instalación
-python -m devlab --version
-python -m devlab doctor
+# Configurar variable de entorno (PowerShell)
+[Environment]::SetEnvironmentVariable("PICO_SDK_PATH", "$env:USERPROFILE\\pico\\pico-sdk", "User")
 ```
 
-## Configuración de Windows Defender (Importante)
+### 4. Verificar Instalación
 
-**Sin estas exclusiones, la compilación será muy lenta o fallará.**
-
-### Ejecutar PowerShell como Administrador
-
-1. Presiona `Win + X`
-2. Selecciona "Windows PowerShell (Administrador)" o "Ejecutar como administrador"
-
-![Ejecutar PowerShell como Administrador](./img/ps_admin.png)
-*Menú de Windows mostrando la opción "Ejecutar como administrador"*
-
-3. Copia y pega los siguientes comandos:
+Abre una **nueva** ventana de PowerShell:
 
 ```powershell
-# Define las rutas de los toolchains
-# NOTA: Actualiza las versiones según lo que DevLab instaló
-$oss="$env:USERPROFILE\.devlab\toolchains\oss-cad-suite-2026-07-06-windows-x64\oss-cad-suite\bin"
-$ghdl="$env:USERPROFILE\.devlab\toolchains\ghdl-6.0.0-windows-x64\bin"
+# Verificar CMake
+cmake --version
 
-# Agrega exclusiones de procesos
-Add-MpPreference -ExclusionProcess "$oss\yosys.exe"
-Add-MpPreference -ExclusionProcess "$oss\nextpnr-himbaechel.exe"
-Add-MpPreference -ExclusionProcess "$oss\gowin_pack.exe"
-Add-MpPreference -ExclusionProcess "$oss\openFPGALoader.exe"
-Add-MpPreference -ExclusionProcess "$ghdl\ghdl.exe"
+# Verificar ARM GCC
+arm-none-eabi-gcc --version
 
-# Agrega exclusión de la carpeta completa (recomendado)
-Add-MpPreference -ExclusionPath "$env:USERPROFILE\.devlab"
+# Verificar SDK
+echo $env:PICO_SDK_PATH
+
+# Verificar Git
+git --version
 ```
 
-![Comandos de PowerShell](./img/ps_commands.webp)
-*Ejecución de los comandos de exclusión en PowerShell como Administrador*
+## Herramientas Opcionales
 
-### Verificar las Exclusiones
+### picotool
+
+Para programar sin modo BOOTSEL:
 
 ```powershell
-Get-MpPreference | Select-Object -ExpandProperty ExclusionPath
-Get-MpPreference | Select-Object -ExpandProperty ExclusionProcess
+cd $env:USERPROFILE\pico
+git clone https://github.com/raspberrypi/picotool.git
+cd picotool
+mkdir build
+cd build
+cmake ..
+cmake --build .
 ```
 
-## Uso Diario
+Agregar a PATH:
+```powershell
+$picotoolPath = "$env:USERPROFILE\pico\picotool\build"
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";$picotoolPath", "User")
+```
 
-### Compilar un Proyecto
+### Terminal Serial
+
+Opciones para comunicación serial:
+
+1. **PuTTY** (recomendado)
+   ```powershell
+   winget install PuTTY.PuTTY
+   ```
+
+2. **Tera Term**
+   ```powershell
+   winget install TeraTermProject.teraterm
+   ```
+
+3. **Arduino IDE Serial Monitor**
+
+## Compilar un Proyecto
+
+### Usando PowerShell
 
 ```powershell
-# Ir al directorio del proyecto
-cd blink
-
-# Compilar con Verilog
-python -m devlab build
-
-# Compilar con VHDL
-python -m devlab build -c devlab-vhdl.toml
-
-# Cargar en la FPGA
-python -m devlab flash
+cd mi_proyecto
+mkdir build
+cd build
+cmake -G "NMake Makefiles" ..
+nmake
 ```
 
-![Salida de devlab flash](./img/flash.png)
-*Resultado exitoso de `devlab flash` cargando el bitstream en la FPGA*
+### Usando Developer Command Prompt
 
-### Comandos Útiles
+1. Buscar "Developer Command Prompt for VS 2022"
+2. Navegar al proyecto
+3. Compilar:
+
+```cmd
+cd mi_proyecto
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release
+```
+
+### Usando Visual Studio Code
+
+1. Instalar extensión "CMake Tools"
+2. Abrir carpeta del proyecto
+3. Presionar `Ctrl+Shift+P`
+4. Buscar "CMake: Configure"
+5. Seleccionar "ARM GCC" como kit
+6. Presionar F7 para compilar
+
+## Cargar el Programa
+
+### Método 1: Modo BOOTSEL
+
+1. Desconecta la placa Pico
+2. Mantén presionado el botón BOOTSEL (blanco)
+3. Conecta el USB (sin soltar BOOTSEL)
+4. Suelta BOOTSEL
+5. La placa aparece como "RPI-RP2" en el Explorador de archivos
+6. Arrastra el archivo `.uf2` desde `build/` a la unidad RPI-RP2
+7. La placa se reinicia automáticamente
+
+### Método 2: Con picotool
 
 ```powershell
-# Ver información del sistema
-python -m devlab doctor
+picotool info
+picotool load programa.uf2 -f
+picotool reboot
 ```
 
-![Salida de devlab doctor](./img/doctor.png)
-*Comando `devlab doctor` mostrando las herramientas instaladas*
+## Comunicación Serial
+
+### Encontrar el puerto COM
+
+1. Conectar la Pico
+2. Abrir "Administrador de dispositivos"
+3. Expandir "Puertos (COM y LPT)"
+4. Buscar "USB Serial Device (COMx)"
+
+### Usar PuTTY
+
+1. Abrir PuTTY
+2. Seleccionar "Serial"
+3. Puerto: COMx (ej. COM3)
+4. Velocidad: 115200
+5. Clic en "Open"
+
+## Solución de Problemas
+
+### CMake no encuentra el compilador
+
+Verificar que ARM GCC esté en PATH:
 
 ```powershell
-# Limpiar archivos de compilación
-Remove-Item -Recurse -Force build
-
-# Ver ayuda
-python -m devlab --help
+$env:Path -split ';' | Select-String arm
 ```
 
-## Solución de Problemas Comunes
-
-### Error: "Command returned non-zero exit status 125"
-
-**Síntoma**: El comando `devlab build` falla con un error de `nextpnr-himbaechel.exe`.
-
-**Causa**: Windows Defender está bloqueando las herramientas.
-
-**Solución**: 
-1. Configura las exclusiones de Windows Defender (ver arriba)
-2. Reinicia PowerShell
-3. Intenta compilar nuevamente
-
-### Error: "7z is not recognized"
-
-**Síntoma**: DevLab no puede extraer los toolchains.
-
-**Causa**: 7-Zip no está instalado o no está en el PATH.
-
-**Solución**:
-```powershell
-winget install 7zip.7zip
-```
-
-Reinicia PowerShell después de la instalación.
-
-### Error: "Could not find JTAG device" al Cargar
-
-**Síntoma**: `devlab flash` no encuentra la FPGA conectada.
-
-**Causa**: Driver USB no configurado correctamente.
-
-**Solución**:
-1. Usa Zadig para instalar el driver WinUSB/libusbK (ver sección de instalación)
-2. Desconecta y reconecta la FPGA
-3. Verifica en el Administrador de Dispositivos que aparezca bajo "Universal Serial Bus devices"
-4. Intenta `python -m devlab flash` nuevamente
-
-### Error: "python: command not found"
-
-**Síntoma**: Windows no encuentra Python.
-
-**Causa**: Python no está instalado o no está en el PATH.
-
-**Solución**:
-1. Descarga Python desde [python.org](https://www.python.org/downloads/)
-2. Durante la instalación, marca "Add Python to PATH"
-3. Reinicia PowerShell
-
-### La Compilación es Muy Lenta
-
-**Causa**: Windows Defender está escaneando cada archivo.
-
-**Solución**: Configura las exclusiones de Windows Defender (ver sección de configuración arriba).
-
-### Error: "Access Denied" al Configurar Exclusiones
-
-**Causa**: PowerShell no se ejecutó como Administrador.
-
-**Solución**:
-1. Cierra PowerShell
-2. Presiona `Win + X`
-3. Selecciona "Windows PowerShell (Administrador)"
-4. Intenta nuevamente
-
-## Actualizar Versiones de Toolchain
-
-Las rutas en los scripts de exclusión incluyen números de versión. Cuando DevLab se actualice, verifica las rutas reales:
+Si no aparece, agregar manualmente:
 
 ```powershell
-# Ver el contenido del directorio de toolchains
-ls $env:USERPROFILE\.devlab\toolchains
+$armPath = "C:\Program Files (x86)\Arm GNU Toolchain arm-none-eabi\13.2 Rel1\bin"
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";$armPath", "User")
 ```
 
-Actualiza las variables `$oss` y `$ghdl` con las nuevas versiones si es necesario.
+### PICO_SDK_PATH no encontrado
+
+```powershell
+# Verificar
+echo $env:PICO_SDK_PATH
+
+# Si está vacío, configurar
+[Environment]::SetEnvironmentVariable("PICO_SDK_PATH", "$env:USERPROFILE\\pico\\pico-sdk", "User")
+
+# Reiniciar PowerShell
+```
+
+### Error: "ninja: command not found"
+
+Instalar Ninja:
+
+```powershell
+winget install Ninja-build.Ninja
+```
+
+O usar NMake en su lugar:
+
+```powershell
+cmake -G "NMake Makefiles" ..
+```
+
+### La Pico no aparece como RPI-RP2
+
+1. Verificar que el cable USB funcione (algunos solo cargan)
+2. Intentar con otro puerto USB
+3. Mantener BOOTSEL presionado ANTES de conectar
+4. Verificar Device Manager para ver si aparece como "RP2 Boot"
+
+### Puerto serial no aparece
+
+Verificar que el programa tenga `pico_enable_stdio_usb` activado:
+
+```cmake
+pico_enable_stdio_usb(mi_programa 1)
+pico_enable_stdio_uart(mi_programa 0)
+```
+
+Y en el código:
+
+```c
+#include <stdio.h>
+#include "pico/stdlib.h"
+
+int main() {
+    stdio_init_all();  // Importante!
+    
+    while (1) {
+        printf("Hola\n");
+        sleep_ms(1000);
+    }
+}
+```
+
+## Configurar VS Code (Opcional)
+
+### Extensiones Recomendadas
+
+1. C/C++ (Microsoft)
+2. CMake Tools (Microsoft)
+3. Serial Monitor (Microsoft)
+
+### settings.json
+
+```json
+{
+    "cmake.configureEnvironment": {
+        "PICO_SDK_PATH": "C:/Users/TuUsuario/pico/pico-sdk"
+    },
+    "cmake.generator": "NMake Makefiles"
+}
+```
 
 ## Recursos Adicionales
 
-- [Guía General de DevLab](./devlab.md)
-- [Archivos CST](./cst.md)
-- [Introducción a Verilog](./verilog.md)
-- [Introducción a VHDL](./vhdl.md)
-
-## Nota de Seguridad
-
-Las exclusiones de Windows Defender reducen la protección del sistema en las carpetas y procesos excluidos. Solo configura estas exclusiones si:
-
-1. Confías en las herramientas de DevLab
-2. Descargaste DevLab desde fuentes oficiales
-3. Entiendes los riesgos de seguridad
-
-Considera usar una máquina virtual o WSL2 si prefieres mantener Windows Defender completamente activo.
+- [Getting Started with Pico - PDF](https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf)
+- [Pico C/C++ SDK](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf)
+- [RP2040 Datasheet](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf)
+- [Pico Setup Windows (GitHub)](https://github.com/raspberrypi/pico-setup-windows)

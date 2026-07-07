@@ -25,37 +25,45 @@ Este repositorio agrupa ejemplos y prácticas de programación de microcontrolad
 
 ## Prácticas de Laboratorio
 
-### <span id="gpio">1. Lectura de Entradas Digitales</span>
+### 1. [Lectura de Entradas Digitales (GPIO)](./gpio.md)
 
 Práctica introductoria para configurar y leer entradas digitales GPIO del RP2040. Incluye:
-- Configuración de pines como entrada
-- Lectura de estados digitales
-- Control de LEDs según entradas
-- Debouncing de botones
+- Configuración de pines como entrada y salida
+- Lectura de estados digitales y control de LEDs
+- Debouncing de botones por software
+- Uso de interrupciones GPIO
 
-### <span id="uart">2. Comunicación UART</span>
+[📖 Ver práctica completa →](./gpio.md)
+
+### 2. [Comunicación UART](./uart.md)
 
 Implementación de comunicación serial asíncrona (UART):
-- Configuración de baudrate
+- Configuración de baudrate y formato
 - Transmisión y recepción de datos
-- Comunicación con terminal serie
+- Shell interactivo por terminal
 - Manejo de interrupciones UART
 
-### <span id="adc">3. Lectura de Temperatura mediante ADC</span>
+[📖 Ver práctica completa →](./uart.md)
+
+### 3. [Lectura de Temperatura mediante ADC](./adc.md)
 
 Uso del conversor analógico-digital para medición de temperatura:
-- Configuración del ADC interno
+- Configuración del ADC de 12 bits
 - Lectura del sensor de temperatura interno del RP2040
-- Conversión de valores ADC a temperatura
-- Muestreo y promediado de lecturas
+- Conversión de valores ADC a unidades físicas
+- Muestreo, promediado y uso de DMA
 
-### <span id="i2c">4. Comunicación I²C con Display OLED</span>
+[📖 Ver práctica completa →](./adc.md)
+
+### 4. [Comunicación I²C con Display OLED](./i2c-oled.md)
 
 Interfaz I²C para control de display OLED:
 - Configuración de bus I²C (SDA, SCL)
 - Protocolo de comunicación I²C
-- Control de display OLED (ej. SSD1306)
-- Visualización de texto y gráficos
+- Control de display OLED SSD1306
+- Visualización de texto, gráficos y animaciones
+
+[📖 Ver práctica completa →](./i2c-oled.md)
 
 ## Flujo Recomendado
 

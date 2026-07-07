@@ -1,10 +1,12 @@
 {
-  "name": "tang-fpga-docs",
+  "name": "rp2040-examples-docs",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vitepress dev .",
+    "docs:dev": "vitepress dev .",
     "build": "vitepress build .",
+    "docs:build": "vitepress build .",
     "preview": "vitepress preview ."
   },
   "devDependencies": {

@@ -39,10 +39,17 @@ features:
 
 ## Prácticas de Laboratorio
 
-- [Lectura de entradas digitales](./examples/index.md#gpio)
-- [Comunicación UART](./examples/index.md#uart)
-- [Lectura de temperatura mediante ADC](./examples/index.md#adc)
-- [Comunicación I²C con display OLED](./examples/index.md#i2c)
+- [Lectura de entradas digitales](./examples/gpio.md)
+- [Comunicación UART](./examples/uart.md)
+- [Lectura de temperatura mediante ADC](./examples/adc.md)
+- [Comunicación I²C con display OLED](./examples/i2c-oled.md)
+
+## Guías de Desarrollo
+
+- [Configuración del SDK](./guide/devlab.md)
+- [Guía para Windows](./guide/windows.md)
+- [Programación en C](./guide/c-programming.md)
+- [Programación en Ensamblador](./guide/asm-programming.md)
 
 ## Uso Básico
 
