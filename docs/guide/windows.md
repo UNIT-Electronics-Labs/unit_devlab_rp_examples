@@ -6,14 +6,11 @@ Esta guía proporciona pasos específicos para configurar el entorno de desarrol
 
 ### 1. Instalar Herramientas Básicas
 
-#### Opción A: Instalador Automático (Recomendado)
-
 Raspberry Pi proporciona un instalador automático para Windows:
 
-1. Descarga el [Pico Setup para Windows](https://github.com/raspberrypi/pico-setup-windows/releases/latest)
-2. Ejecuta el instalador `pico-setup-windows-x64-standalone.exe`
-3. Sigue el asistente (instalará CMake, ARM GCC, Build Tools, Git, Python, VS Code)
-4. Reinicia el sistema cuando termine
+1. Descarga el [Source Code de PicoSDK](https://github.com/raspberrypi/pico-sdk/releases/latest)
+2. Descomprime el archivo zip `pico-sdk-<latestversion>` en la carpeta de tu elección
+3. Reinicia el sistema cuando termine
 
 #### Opción B: Instalación Manual
 
@@ -34,9 +31,8 @@ winget install Python.Python.3.11
 ### 2. Instalar ARM GCC
 
 Descarga e instala ARM GCC desde:
-[https://developer.arm.com/downloads/-/gnu-rm](https://developer.arm.com/downloads/-/gnu-rm)
-
-1. Descarga el instalador Windows (.exe)
+[https://developer.arm.com/downloads/-/gnu-rm](https://developer.arm.com/-/media/Files/downloads/gnu/15.2.rel1/binrel/arm-gnu-toolchain-15.2.rel1-mingw-w64-i686-arm-none-eabi.msi)
+1. Descarga el instalador Windows (.msi)
 2. Ejecuta el instalador
 3. **Importante**: Marca la opción "Add path to environment variable"
 

@@ -15,11 +15,33 @@ Esta guía te ayudará a configurar el entorno de desarrollo para programar el R
 
 ### Ubuntu/Debian
 
+
+#### Opción A: Instalador Automático (Recomendado)
+Para Linux se automatizo un script personalizado, el cual instala todos los programas requeridos y las dependencias necesarias 
+para poder configurar los proyectos de forma general en Linux
+
+1. Clona el repositorio de [Proyectos de ejemplo para RP2040](https://github.com/obviousfancy/RP2040_ExampleProjects) mediante el siguiente codigo
+```bash
+git clone https://github.com/obviousfancy/RP2040_ExampleProjects.git
+```
+
+2. Clona el SDK de Raspberry Pi Pico general
+```bash
+git clone https://github.com/raspberrypi/pico-sdk.git
+```
+
+3. 
+```bash
+cd RP2040_ExampleProjects
+chmod +x install.sh
+./install.sh
+```
+
+#### Opción Manual
 ```bash
 # Instalar dependencias
 sudo apt update
-sudo apt install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi \
-  build-essential libstdc++-arm-none-eabi-newlib git
+sudo apt install cmake python3 build-essential gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib
 
 # Clonar el SDK de Pico
 cd ~
