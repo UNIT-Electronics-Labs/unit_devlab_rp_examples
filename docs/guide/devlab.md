@@ -30,14 +30,14 @@ git clone https://github.com/obviousfancy/RP2040_ExampleProjects.git
 git clone https://github.com/raspberrypi/pico-sdk.git
 ```
 
-3. 
+3. Ejecuta el archivo de instalación completa
 ```bash
 cd RP2040_ExampleProjects
 chmod +x install.sh
 ./install.sh
 ```
 
-#### Opción Manual
+#### Opción B: Instalación Manual
 ```bash
 # Instalar dependencias
 sudo apt update
@@ -52,8 +52,11 @@ git submodule update --init
 # Configurar variable de entorno
 echo 'export PICO_SDK_PATH=$HOME/pico-sdk' >> ~/.bashrc
 source ~/.bashrc
-```
 
+# Verifica: 
+echo $PICO_SDK_PATH
+# debe imprimir: /home/tuusuario/Documents/tuusuario/pico-sdk
+```
 ### Fedora/RHEL
 
 ```bash

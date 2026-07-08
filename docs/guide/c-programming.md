@@ -3,7 +3,19 @@
 Esta guía introduce la programación en C para el microcontrolador RP2040 utilizando el Pico SDK.
 
 ## Estructura Básica de un Proyecto
-
+Un proyecto basico de SDK 
+```shell
+mi_proyecto/
+├── mi_proyecto.c              # Código fuente principal
+├── CMakeLists.txt             # Configuración de build
+├── pico_sdk_import.cmake      # Localizador del SDK
+└── build/                     # Generado por CMake (no versionar es interno en cada usuario)
+    ├── mi_proyecto.elf
+    ├── mi_proyecto.uf2
+    ├── mi_proyecto.bin
+    ├── mi_proyecto.hex
+    └── CMakeCache.txt
+```
 ### CMakeLists.txt
 
 ```cmake
@@ -12,9 +24,8 @@ cmake_minimum_required(VERSION 3.13)
 # Inicializar el SDK
 include(pico_sdk_import.cmake)
 
-project(mi_proyecto C CXX ASM)
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 17)
+project(mi_proyecto)
+
 
 pico_sdk_init()
 
@@ -25,7 +36,7 @@ add_executable(mi_programa
 
 # Vincular librerías
 target_link_libraries(mi_programa
-    pico_stdlib
+    pico_stdlib #libaditional
 )
 
 # Crear archivos de salida (UF2, BIN, HEX)
@@ -39,11 +50,14 @@ pico_enable_stdio_uart(mi_programa 0)
 ### main.c básico
 
 ```c
+/* User Includes */
 #include "pico/stdlib.h"
+
+/* User Defines */
+#define MY_PIN 25
 
 int main() {
     // Inicializar GPIO
-    const uint LED_PIN = 25;
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
 
@@ -229,9 +243,12 @@ int main() {
 ### Compilar
 
 ```bash
-mkdir build && cd build
-cmake ..
-make -j4
+cmake -S . -B build
+cmake --build build
+openocd -f interface/cmsis-dap.cfg \
+        -f target/rp2040.cfg \
+        -c "adapter speed 5000" \
+        -c "program build/${PROJECT_NAME}.elf verify reset exit"
 ```
 
 ### Mensajes de Debug por USB
@@ -282,7 +299,14 @@ float leer_temperatura(void) {
     return 27.0f - (voltage - 0.706f) / 0.001721f;
 }
 ```
+### Proyecto Multilibreria
 
+```cmake
+target_link_libraries(lib1
+    lib2
+    libn
+)
+```
 ## Mejores Prácticas
 
 1. **Siempre inicializar** periféricos antes de usar

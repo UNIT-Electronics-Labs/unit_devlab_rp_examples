@@ -18,9 +18,8 @@ export default defineConfig({
         items: [
           { text: 'DevLab', link: '/guide/devlab' },
           { text: 'Windows', link: '/guide/windows' },
-          { text: 'Verilog', link: '/guide/verilog' },
-          { text: 'VHDL', link: '/guide/vhdl' },
-          { text: 'Archivos CST', link: '/guide/cst' }
+          { text: 'C Programming', link: '/guide/c-programming' },
+          { text: 'CMakeLists', link: '/guide/CMakeLists' }
         ]
       },
       {
