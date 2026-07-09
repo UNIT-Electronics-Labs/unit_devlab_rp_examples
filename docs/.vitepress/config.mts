@@ -19,7 +19,8 @@ export default defineConfig({
           { text: 'DevLab', link: '/guide/devlab' },
           { text: 'Windows', link: '/guide/windows' },
           { text: 'C Programming', link: '/guide/c-programming' },
-          { text: 'CMakeLists', link: '/guide/CMakeLists' }
+          { text: 'CMakeLists', link: '/guide/CMakeLists' },
+          { text: 'Hardware Usado', link: '/guide/hardware' }
         ]
       },
       {
@@ -27,9 +28,10 @@ export default defineConfig({
         items: [
           { text: 'Índice', link: '/examples/' },
           { text: 'Blink', link: '/examples/basic/blink' },
-          { text: 'AND', link: '/examples/basic/and' },
-          { text: 'OR', link: '/examples/basic/or' },
-          { text: 'NOT', link: '/examples/basic/not' }
+          { text: 'GPIO', link: '/examples/basic/gpio' },
+          { text: 'ADC', link: '/examples/basic/adcread' },
+          { text: 'UART', link: '/examples/basic/uart' },
+          { text: 'OLED', link: '/examples/basic/oled' },
         ]
       },
       {
