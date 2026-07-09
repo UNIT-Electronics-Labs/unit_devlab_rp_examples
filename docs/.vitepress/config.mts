@@ -4,6 +4,7 @@ export default defineConfig({
   title: 'Gowin FPGA Labs',
   description: 'Documentación de ejemplos FPGA Gowin con DevLab, Verilog y VHDL.',
   lang: 'es-MX',
+  base: process.env.BASE_PATH || '/',
   cleanUrls: true,
   themeConfig: {
     nav: [
