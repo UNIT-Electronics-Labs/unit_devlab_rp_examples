@@ -1,0 +1,72 @@
+name: Deploy Docs
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - '.github/workflows/deploy-docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build and Deploy VitePress
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
+
+      - name: Set VitePress base
+        id: vitepress-base
+        run: |
+          repo_name="${GITHUB_REPOSITORY#*/}"
+          owner_name="${GITHUB_REPOSITORY%/*}"
+          if [ "${repo_name}" = "${owner_name}.github.io" ]; then
+            echo "base=/" >> "$GITHUB_OUTPUT"
+          else
+            echo "base=/${repo_name}/" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install dependencies
+        working-directory: docs
+        run: npm ci
+
+      - name: Build
+        working-directory: docs
+        env:
+          BASE_PATH: ${{ steps.vitepress-base.outputs.base }}
+        run: npm run build
+
+      - name: Disable Jekyll
+        run: touch docs/.vitepress/dist/.nojekyll
+
+      - name: Deploy to gh-pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd docs/.vitepress/dist
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Deploy docs from ${GITHUB_SHA}"
+          git branch -M gh-pages
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force origin gh-pages
