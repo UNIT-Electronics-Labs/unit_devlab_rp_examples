@@ -1,6 +1,6 @@
 # Ejemplo 04: Comunicación I²C con display OLED
 
-Corresponde a la práctica **Comunicación I²C con display OLED** del Módulo II. Es el ejemplo multi-archivo de esta sección: separa el driver del display (`ssd1306.h` / `ssd1306.c`) del programa principal, siguiendo el mismo patrón de proyecto modular que ya se documenta en la [guía de C](../c-programming.md#proyecto-multi-archivo).
+Corresponde a la práctica **Comunicación I²C con display OLED** del Módulo II. Es el ejemplo multi-archivo de esta sección: separa el driver del display (`ssd1306.h` / `ssd1306.c`) del programa principal, siguiendo el mismo patrón de proyecto modular que ya se documenta en la [guía de C](../../guide/c-programming.md#proyecto-multi-archivo).
 
 No implementa texto ni fuentes — eso complica el driver sin aportar nada nuevo sobre I²C. En su lugar dibuja un cuadro que rebota de un lado a otro, suficiente para confirmar que la comunicación funciona y para entender cómo se arma un framebuffer.
 
@@ -193,7 +193,7 @@ El SSD1306 organiza su memoria en 8 "páginas" verticales de 8 pixeles cada una;
 
 La razón para usar un framebuffer en vez de escribir pixel por pixel es de rendimiento: cada `i2c_write_blocking` tiene overhead de transacción I²C, así que agrupar todos los cambios en memoria y enviarlos de una sola vez en `ssd1306_show()` es mucho más eficiente que 1024 transacciones individuales. Este es exactamente el patrón sobre el que se construyen las librerías de fuentes/texto: una vez que existe el framebuffer, dibujar caracteres es solo prender los bits correctos.
 
-El detalle de `i2c_init`, `i2c_write_blocking` y la configuración de pines está en la [guía de C, sección I²C](../c-programming.md#i²c-hardware_i2c).
+El detalle de `i2c_init`, `i2c_write_blocking` y la configuración de pines está en la [guía de C, sección I²C](../../guide/c-programming.md#i²c-hardware_i2c).
 
 ## Compilar y cargar
 
@@ -203,7 +203,7 @@ cmake ..
 make
 ```
 
-Ver [configuración del entorno](../devlab.md#cargar-el-programa) para el flasheo.
+Ver [configuración del entorno](../../guide/devlab.md#cargar-el-programa) para el flasheo.
 
 ## Verificación
 
@@ -212,8 +212,8 @@ Un cuadro de 16×16 pixeles rebota horizontalmente en la pantalla. Si la pantall
 ## Variantes
 
 - Agregar una fuente 5×7 y una función `ssd1306_draw_text` para mostrar strings.
-- Controlar la velocidad del rebote con el botón del [ejemplo 01](./01-lectura-entradas-digitales.md).
-- Mostrar la temperatura del [ejemplo 03](./03-lectura-temperatura-adc.md) en pantalla en vez de imprimirla por USB.
+- Controlar la velocidad del rebote con el botón del [ejemplo 01](./gpio.md).
+- Mostrar la temperatura del [ejemplo 03](./adcread.md) en pantalla en vez de imprimirla por USB.
 - Dibujar dos figuras independientes para practicar composición de framebuffer.
 
 ## Errores comunes

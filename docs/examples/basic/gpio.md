@@ -83,7 +83,7 @@ int main() {
 
 ## Explicación
 
-Con pull-up interno el pin lee `1` en reposo y `0` cuando el botón conecta a GND — por eso la lógica está invertida (`!estado_actual` para el LED). El debounce aquí es deliberadamente simple: al detectar un cambio, espera 20 ms y vuelve a leer; si el cambio persiste, se considera real. Es suficiente para un botón de panel, pero no es la única forma — la alternativa por interrupciones está en la [guía de C, sección Interrupciones GPIO](../c-programming.md#interrupciones-gpio), y vale la pena mostrarla como contraste una vez que este ejemplo ya funciona.
+Con pull-up interno el pin lee `1` en reposo y `0` cuando el botón conecta a GND — por eso la lógica está invertida (`!estado_actual` para el LED). El debounce aquí es deliberadamente simple: al detectar un cambio, espera 20 ms y vuelve a leer; si el cambio persiste, se considera real. Es suficiente para un botón de panel, pero no es la única forma — la alternativa por interrupciones está en la [guía de C, sección Interrupciones GPIO](../../guide/c-programming.md#interrupciones-gpio), y vale la pena mostrarla como contraste una vez que este ejemplo ya funciona.
 
 ## Compilar y cargar
 
@@ -93,7 +93,7 @@ cmake ..
 make
 ```
 
-Ver [configuración del entorno](../devlab.md#cargar-el-programa) para el flasheo.
+Ver [configuración del entorno](../../guide/devlab.md#cargar-el-programa) para el flasheo.
 
 ## Verificación
 
@@ -103,7 +103,7 @@ Abre una terminal serial sobre el puerto USB-CDC que expone la placa (p. ej. `/d
 
 - Reemplazar el polling por `gpio_set_irq_enabled_with_callback` y comparar consumo de CPU.
 - Agregar un contador de pulsaciones y mostrarlo cada vez que cambia.
-- Usar el botón para alternar la frecuencia de parpadeo del [ejemplo 00](./00-parpadeo-led.md) en vez de un simple encendido/apagado.
+- Usar el botón para alternar la frecuencia de parpadeo del [ejemplo 00](./blink.md) en vez de un simple encendido/apagado.
 - Combinar con PWM (`hardware_pwm`) para que el LED se atenúe gradualmente en vez de encender de golpe.
 
 ## Errores comunes

@@ -370,4 +370,4 @@ Este comando verifica que todos los toolchains estén instalados correctamente.
 
 ## Siguiente Paso
 
-Después de entender el build, revisa [Archivos CST](./cst.md) para aprender cómo conectar entradas y salidas del HDL con pines físicos de la placa.
+Después de entender el build, revisa la [estructura de un ejemplo](#estructura-de-un-ejemplo) para ubicar el archivo `pins.cst`, que conecta entradas y salidas del HDL con pines físicos de la placa.

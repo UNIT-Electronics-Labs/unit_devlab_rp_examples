@@ -83,7 +83,7 @@ int main() {
 
 ## Explicación
 
-`uart_init` configura el baud rate sobre la instancia de hardware `uart0`; `gpio_set_function` es el paso que se olvida con más frecuencia — sin él, los pines siguen configurados como GPIO genérico y la UART no tiene por dónde salir aunque el periférico ya esté inicializado. El resto es polling simple: `uart_is_readable` evita bloquear el programa mientras no llega nada. El detalle de cada función está en la [guía de C, sección UART](../c-programming.md#uart-hardware_uart).
+`uart_init` configura el baud rate sobre la instancia de hardware `uart0`; `gpio_set_function` es el paso que se olvida con más frecuencia — sin él, los pines siguen configurados como GPIO genérico y la UART no tiene por dónde salir aunque el periférico ya esté inicializado. El resto es polling simple: `uart_is_readable` evita bloquear el programa mientras no llega nada. El detalle de cada función está en la [guía de C, sección UART](../../guide/c-programming.md#uart-hardware_uart).
 
 ## Compilar y cargar
 
@@ -93,15 +93,15 @@ cmake ..
 make
 ```
 
-Ver [configuración del entorno](../devlab.md#cargar-el-programa) para el flasheo.
+Ver [configuración del entorno](../../guide/devlab.md#cargar-el-programa) para el flasheo.
 
 ## Verificación
 
-Con `minicom` o `screen` (ver [configuración del entorno](../devlab.md#minicom-o-screen)) conéctate al puerto del adaptador USB-serial —no al de la placa— a 115200 8N1. Al resetear la Pico debe aparecer el mensaje inicial, y cada carácter que escribas debe regresar en eco.
+Con `minicom` o `screen` (ver [configuración del entorno](../../guide/devlab.md#minicom-o-screen)) conéctate al puerto del adaptador USB-serial —no al de la placa— a 115200 8N1. Al resetear la Pico debe aparecer el mensaje inicial, y cada carácter que escribas debe regresar en eco.
 
 ## Variantes
 
-- Reemplazar el eco simple por un parser de comandos (`"LED ON"` / `"LED OFF"`) que controle el GPIO del [ejemplo 00](./00-parpadeo-led.md).
+- Reemplazar el eco simple por un parser de comandos (`"LED ON"` / `"LED OFF"`) que controle el GPIO del [ejemplo 00](./blink.md).
 - Mover la comunicación a `uart1` en otro par de pines y correr ambos ejemplos simultáneamente.
 - Agregar un timeout: si no llega nada en N segundos, enviar un "heartbeat".
 

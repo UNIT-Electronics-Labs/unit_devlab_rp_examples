@@ -68,7 +68,7 @@ int main() {
 
 ## Explicación
 
-El ADC del RP2040 es de 12 bits (0–4095) sobre una referencia de 3.3 V; `raw * 3.3f / 4096.0f` convierte la lectura cruda a voltaje. La fórmula de temperatura es la aproximación lineal que da el fabricante a partir del voltaje del sensor interno — es útil para detectar cambios relativos (¿subió o bajó?), pero no es un sensor de precisión: para valores absolutos confiables se necesita un sensor externo calibrado (LM35, DS18B20, etc.) conectado a uno de los canales 0–3. El detalle de `adc_init`/`adc_select_input` está en la [guía de C, sección ADC](../c-programming.md#adc-hardware_adc).
+El ADC del RP2040 es de 12 bits (0–4095) sobre una referencia de 3.3 V; `raw * 3.3f / 4096.0f` convierte la lectura cruda a voltaje. La fórmula de temperatura es la aproximación lineal que da el fabricante a partir del voltaje del sensor interno — es útil para detectar cambios relativos (¿subió o bajó?), pero no es un sensor de precisión: para valores absolutos confiables se necesita un sensor externo calibrado (LM35, DS18B20, etc.) conectado a uno de los canales 0–3. El detalle de `adc_init`/`adc_select_input` está en la [guía de C, sección ADC](../../guide/c-programming.md#adc-hardware_adc).
 
 ## Compilar y cargar
 
@@ -78,7 +78,7 @@ cmake ..
 make
 ```
 
-Ver [configuración del entorno](../devlab.md#cargar-el-programa) para el flasheo.
+Ver [configuración del entorno](../../guide/devlab.md#cargar-el-programa) para el flasheo.
 
 ## Verificación
 
@@ -88,7 +88,7 @@ Con una terminal serial sobre el puerto USB-CDC de la placa a 115200 baudios, de
 
 - Promediar 10 lecturas antes de imprimir, para reducir el ruido.
 - Migrar a un sensor analógico externo en el canal 0, 1 o 2, y comparar la estabilidad de la lectura contra el sensor interno.
-- Encender el LED del [ejemplo 00](./00-parpadeo-led.md) si la temperatura supera un umbral.
+- Encender el LED del [ejemplo 00](./blink.md) si la temperatura supera un umbral.
 
 ## Errores comunes
 

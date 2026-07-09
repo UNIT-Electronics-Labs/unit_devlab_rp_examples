@@ -73,7 +73,7 @@ int main(){
 
 ## Explicación
 
-Tres llamadas hacen todo el trabajo: `gpio_init` reserva el pin y lo inicializa como entrada o salida digital, `gpio_set_dir` lo configura como salida, y el ciclo alterna el voltaje con `gpio_put` cada 500 ms. El detalle de cada función está en la [guía de C, sección GPIO](../c-programming.md#gpio-pico_stdlib).
+Tres llamadas hacen todo el trabajo: `gpio_init` reserva el pin y lo inicializa como entrada o salida digital, `gpio_set_dir` lo configura como salida, y el ciclo alterna el voltaje con `gpio_put` cada 500 ms. El detalle de cada función está en la [guía de C, sección GPIO](../../guide/c-programming.md#gpio-pico_stdlib).
 
 ## Compilar y cargar
 
@@ -96,7 +96,7 @@ El LED integrado debe parpadear a intervalos de medio segundo. Si no se observa 
 ## Variantes
 
 - Cambiar el patrón a un parpadeo tipo "SOS" (Morse).
-- Controlar la frecuencia con un GPIO de entrada (ver el [ejemplo 01](./01-lectura-entradas-digitales.md)).
+- Controlar la frecuencia con un GPIO de entrada (ver el [ejemplo 01](./gpio.md)).
 - Agregar un segundo LED externo en otro pin y alternar entre ambos.
 
 ## Errores comunes
