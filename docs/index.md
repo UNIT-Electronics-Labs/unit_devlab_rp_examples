@@ -42,7 +42,7 @@ features:
 - [Lectura de entradas digitales](./examples/gpio.md)
 - [Comunicación UART](./examples/uart.md)
 - [Lectura de temperatura mediante ADC](./examples/adc.md)
-- [Comunicación I²C con display OLED](./examples/i2c-oled.md)
+- [Comunicación I²C con display OLED](./examples/i2c_oled.md)
 
 ## Guías de Desarrollo
 
