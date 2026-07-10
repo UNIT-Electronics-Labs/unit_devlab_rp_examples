@@ -10,7 +10,8 @@ export default defineConfig({
     nav: [
       { text: 'Inicio', link: '/' },
       { text: 'Guías', link: '/guide/devlab' },
-      { text: 'Ejemplos', link: '/examples/' }
+      { text: 'Ejemplos', link: '/examples/' },
+      { text: 'Aplicaciones Arduino', link: '/arduino/' },
     ],
     sidebar: [
       {
@@ -32,6 +33,20 @@ export default defineConfig({
           { text: 'ADC', link: '/examples/basic/adcread' },
           { text: 'UART', link: '/examples/basic/uart' },
           { text: 'OLED', link: '/examples/basic/oled' },
+          { text: 'I2C', link: '/examples/basic/i2c' },
+          { text: 'I2C con OLED', link: '/examples/i2c_oled' },
+          { text: 'TMP235 ADC', link: '/examples/adcTMP235' },
+          { text: 'TMP235 ADC con OLED', link: '/examples/oled_tmp235' }
+        ]
+      },
+      { 
+        text: 'Aplicaciones Arduino',
+        items: [
+          { text: 'Lectura de Sensor I2C con OLED', link: '/arduino/i2c_oled' },
+          { text: 'Lectura de Sensor ADC', link: '/arduino/tmp235' },
+          { text: 'Lectura de Sensor ADC Con OLED y UART', link: '/arduino/tmp235_oled' },
+          { text: 'Interrupciones', link: '/arduino/interrupts' },
+          { text: 'FlappyBird', link: '/arduino/OledFlappyBird' }
         ]
       }
     ],
