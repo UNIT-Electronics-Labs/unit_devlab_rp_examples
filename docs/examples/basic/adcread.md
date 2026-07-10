@@ -232,7 +232,7 @@ minicom -b 115200 -D /dev/ttyACM0
 En ambos casos debe observarse una lectura de temperatura impresa cada segundo. En la parte del sensor interno, el valor debe aproximarse a la temperatura ambiente, con cierta desviación característica del sensor integrado; en la parte del TMP235, la lectura debe ser más estable y responder de forma más inmediata a cambios de temperatura provocados de manera controlada (por ejemplo, al sostener el sensor entre los dedos).
  
 <div align="center">
-  <img src="../resources/adcpractice2.png" width="300px" alt="Lectura de temperatura en terminal serial">
+  <img src="../resources/adcpractice3.png" width="300px" alt="Lectura de temperatura en terminal serial">
   <p><em>Salida esperada en la terminal serial</em></p>
 </div>
 
