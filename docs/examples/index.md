@@ -55,7 +55,7 @@ Uso del conversor analógico-digital para medición de temperatura:
 
 [📖 Ver práctica completa →](./adc.md)
 
-### 4. [Comunicación I²C con Display OLED](./i2c-oled.md)
+### 4. [Comunicación I²C con Display OLED](./i2c_oled.md)
 
 Interfaz I²C para control de display OLED:
 - Configuración de bus I²C (SDA, SCL)
@@ -63,7 +63,7 @@ Interfaz I²C para control de display OLED:
 - Control de display OLED SSD1306
 - Visualización de texto, gráficos y animaciones
 
-[📖 Ver práctica completa →](./i2c-oled.md)
+[📖 Ver práctica completa →](./i2c_oled.md)
 
 ## Flujo Recomendado
 
