@@ -30,6 +30,7 @@ features:
 - Implementación utilizando **RP2040** como plataforma compatible con arquitectura Cortex-M0+
 - Programación en **lenguaje ensamblador**
 - Programación en **lenguaje C**
+- Programación en **Arduino IDE**
 - **Entradas y salidas digitales**
 - **Comunicación UART**
 - **Comunicación I²C**

@@ -9,6 +9,7 @@ Este repositorio agrupa ejemplos y prácticas de programación de microcontrolad
 - Implementación utilizando RP2040 (arquitectura Cortex-M0+)
 - Programación en lenguaje ensamblador
 - Programación en lenguaje C
+- Programación en Arduino IDE
 
 ### Periféricos y Comunicaciones
 - Entradas y salidas digitales (GPIO)
