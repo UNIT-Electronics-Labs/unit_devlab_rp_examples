@@ -28,6 +28,17 @@ export default defineConfig({
         text: 'Ejemplos Básicos',
         items: [
           { text: 'Índice', link: '/examples/' },
+          {
+            text: 'Pico SDK',
+            collapsed: false,
+            items: [
+              { text: 'Blink', link: '/examples/basic/blink' },
+              { text: 'GPIO', link: '/examples/basic/gpio' },
+              { text: 'ADC', link: '/examples/basic/adcread' },
+              { text: 'UART', link: '/examples/basic/uart' },
+              { text: 'OLED', link: '/examples/basic/oled' }
+            ]
+          },
           { text: 'Blink', link: '/examples/basic/blink' },
           { text: 'GPIO', link: '/examples/basic/gpio' },
           { text: 'ADC', link: '/examples/basic/adcread' },
