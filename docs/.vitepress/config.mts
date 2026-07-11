@@ -19,30 +19,65 @@ export default defineConfig({
         items: [
           { text: 'DevLab', link: '/guide/devlab' },
           { text: 'Windows', link: '/guide/windows' },
-          { text: 'C Programming', link: '/guide/c-programming' },
+          { text: 'Programación en C con Pico SDK', link: '/guide/c-programming' },
           { text: 'CMakeLists', link: '/guide/CMakeLists' },
           { text: 'Hardware Usado', link: '/guide/hardware' }
         ]
       },
       {
-        text: 'Ejemplos Básicos',
+        text: 'Pico C SDK',
         items: [
           { text: 'Índice', link: '/examples/' },
           {
-            text: 'Pico SDK',
+            text: 'Perifericos Basicos',
             collapsed: false,
             items: [
-              { text: 'Blink', link: '/examples/basic/blink' },
-              { text: 'GPIO', link: '/examples/basic/gpio' },
-              { text: 'ADC', link: '/examples/basic/adcread' },
-              { text: 'UART', link: '/examples/basic/uart' },
+              {
+
+                  text: 'Fundamentos',
+                  items: [
+                    { text: 'Blink: Hello World', link: '/examples/basic/00_blink' },
+                    { text: 'Serial: Comunicación con PC', link: '/examples/basic/01_stdio' },
+              ]
+              },
+              {
+
+                  text: 'Entradas Digitales e Interrupciones',
+                  items: [
+                    { text: 'GPIO: Entradas y salidas', link: '/examples/basic/02_gpio' },
+                    { text: 'IRQ: Interrupciones', link: '/examples/basic/03_irq' },
+              ]
+              },              
+              {
+                 
+                  text: 'Señales Analogicas',
+                  items: [
+                    { text: 'ADC: Lectura Analógica', link: '/examples/basic/04_adc' },
+                    { text: 'PWM: Control de Potencia', link: '/examples/basic/05_pwm' },
+                    { text: 'Timer: Temporización', link: '/examples/basic/06_timer' },
+              ]
+              },
+              {
+                 
+                  text: 'Protocolos de Comunicación',
+                  items: [
+                    { text: 'UART: Comunicación Serial', link: '/examples/basic/07_uart' },
+                    { text: 'I2C: Comunicación en Bus', link: '/examples/basic/08_i2c' },
+                    { text: 'SPI: Protocolo de Interface', link: '/examples/basic/09_spi' },
+              ]
+              },
+              {
+                 
+                  text: 'Utilidades RP2040',
+                  items: [
+                    { text: 'Multicore: Uso de los dos núcleos', link: '/examples/basic/10_multicore' },
+                    { text: 'PIO: Programable Input/Output', link: '/examples/basic/11_pio' },
+              ]
+              },
               { text: 'OLED', link: '/examples/basic/oled' }
             ]
           },
-          { text: 'Blink', link: '/examples/basic/blink' },
-          { text: 'GPIO', link: '/examples/basic/gpio' },
-          { text: 'ADC', link: '/examples/basic/adcread' },
-          { text: 'UART', link: '/examples/basic/uart' },
+          { text: 'Aplicaciones de GPIO', link: '/examples/basic/blink' },
           { text: 'OLED', link: '/examples/basic/oled' },
           { text: 'I2C con OLED', link: '/examples/i2c_oled' },
           { text: 'TMP235 ADC', link: '/examples/adcTMP235' },
@@ -50,7 +85,7 @@ export default defineConfig({
         ]
       },
       { 
-        text: 'Aplicaciones Arduino',
+        text: 'Arduino',
         items: [
           { text: 'Lectura de Sensor I2C con OLED', link: '/arduino/i2c_oled' },
           { text: 'Lectura de Sensor ADC', link: '/arduino/tmp235' },

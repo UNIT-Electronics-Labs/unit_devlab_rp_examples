@@ -1,6 +1,6 @@
 # Ejemplos y Prácticas
 
-Este repositorio agrupa ejemplos y prácticas de programación de microcontroladores utilizando el **RP2040** como plataforma de desarrollo. El RP2040 es un microcontrolador dual-core ARM Cortex-M0+ desarrollado por Raspberry Pi.
+Este repositorio agrupa ejemplos y prácticas de programación de microcontroladores utilizando el microcontrolador **RP2040**  en su version Rapberry Pi Pico como plataforma de desarrollo. El RP2040 es un microcontrolador dual-core ARM Cortex-M0+ desarrollado por Raspberry Pi.
 
 ## Contenido Temático
 
@@ -12,12 +12,18 @@ Este repositorio agrupa ejemplos y prácticas de programación de microcontrolad
 - Programación en Arduino IDE
 
 ### Periféricos y Comunicaciones
+- Basicos RP2040
+- Comunicacion USB
 - Entradas y salidas digitales (GPIO)
+- Interrupciones
+- ADC (Conversor Analógico-Digital)
+- PWM
+- Temporizadores
 - Comunicación UART
 - Comunicación I²C
 - Comunicación SPI
-- ADC (Conversor Analógico-Digital)
-- Temporizadores
+- Multinucleo Cortex M0
+- PIO
 
 ### Herramientas de Desarrollo
 - SDK de RP2040
@@ -69,20 +75,6 @@ Interfaz I²C para control de display OLED:
 ## Flujo Recomendado
 
 ```bash
-# Compilar ejemplo
-mkdir build
-cd build
-cmake ..
-make
-
-# Cargar a la placa
-# Mantener BOOTSEL presionado y conectar USB
-# Copiar el archivo .uf2 generado
+pico-flash
 ```
 
-Para programación directa con picotool:
-
-```bash
-picotool load example.uf2
-picotool reboot
-```
