@@ -1,0 +1,69 @@
+<svg viewBox="0 0 860 800" xmlns="http://www.w3.org/2000/svg" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="860" height="800" fill="#FFFFFF"/>
+
+  <text x="430" y="20" text-anchor="middle" font-size="16" font-weight="bold" fill="#0F172A">Configuracion desde C (Core0)</text>
+
+  <!-- C1 -->
+  <rect x="350" y="30" width="160" height="36" rx="18" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="53" text-anchor="middle" font-size="13" fill="#1E293B">Inicio</text>
+  <line x1="430" y1="66" x2="430" y2="81" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+  <!-- C2 -->
+  <rect x="150" y="81" width="560" height="36" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="103" text-anchor="middle" font-size="12" fill="#1E293B">offset = pio_add_program(pio, &amp;blink_program);</text>
+  <line x1="430" y1="117" x2="430" y2="132" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+  <!-- C3 -->
+  <rect x="150" y="132" width="560" height="50" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="153" text-anchor="middle" font-size="12" fill="#1E293B">pio_gpio_init(pio, LED_PIN);</text>
+  <text x="430" y="171" text-anchor="middle" font-size="12" fill="#1E293B">pio_sm_set_consecutive_pindirs(pio, sm, LED_PIN, 1, true);</text>
+  <line x1="430" y1="182" x2="430" y2="197" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+  <!-- C4 -->
+  <rect x="150" y="197" width="560" height="50" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="218" text-anchor="middle" font-size="12" fill="#1E293B">config = blink_program_get_default_config(offset);</text>
+  <text x="430" y="236" text-anchor="middle" font-size="12" fill="#1E293B">sm_config_set_set_pins(&amp;config, LED_PIN, 1);</text>
+  <line x1="430" y1="247" x2="430" y2="262" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+  <!-- C5 -->
+  <rect x="150" y="262" width="560" height="36" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="284" text-anchor="middle" font-size="12" fill="#1E293B">pio_sm_init(pio, sm, offset, &amp;config); pio_sm_set_enabled(pio, sm, true);</text>
+  <line x1="430" y1="298" x2="430" y2="313" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+  <!-- C6 -->
+  <rect x="150" y="313" width="560" height="36" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="335" text-anchor="middle" font-size="12" fill="#1E293B">pio_sm_put_blocking(pio, sm, delay_value);</text>
+
+  <line x1="40" y1="368" x2="820" y2="368" stroke="#CBD5E1" stroke-width="1"/>
+
+  <text x="430" y="393" text-anchor="middle" font-size="16" font-weight="bold" fill="#0F172A">Programa PIO (se ejecuta de forma autonoma en la maquina de estados)</text>
+
+  <!-- P1 -->
+  <rect x="150" y="410" width="560" height="36" rx="8" fill="#FDE68A" stroke="#D97706" stroke-width="1.5"/>
+  <text x="430" y="432" text-anchor="middle" font-size="12" fill="#1E293B">pull block;  out y, 32   (recibe el retardo, una sola vez)</text>
+  <line x1="430" y1="446" x2="430" y2="461" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+  <!-- P2 -->
+  <rect x="150" y="461" width="560" height="50" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="430" y="482" text-anchor="middle" font-size="12" fill="#1E293B">wrap_target:  mov x, y;  set pins, 1   (LED encendido)</text>
+  <text x="430" y="500" text-anchor="middle" font-size="12" fill="#1E293B">jmp x-- (bucle): permanece encendido (Y+1) ciclos</text>
+  <line x1="430" y1="511" x2="430" y2="526" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+  <!-- P3 -->
+  <rect x="150" y="526" width="560" height="50" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="430" y="547" text-anchor="middle" font-size="12" fill="#1E293B">mov x, y;  set pins, 0   (LED apagado)</text>
+  <text x="430" y="565" text-anchor="middle" font-size="12" fill="#1E293B">jmp x-- (bucle): permanece apagado (Y+1) ciclos</text>
+
+  <path d="M 710 486 C 800 486, 800 550, 710 550" fill="none" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <text x="800" y="518" text-anchor="middle" font-size="10.5" fill="#475569">.wrap</text>
+
+  <text x="430" y="625" text-anchor="middle" font-size="13" font-weight="bold" fill="#0F172A">periodo = 2 x (Y + 3) ciclos de clk_sys   →   frecuencia = clk_sys / (2 x (Y + 3))</text>
+  <text x="430" y="647" text-anchor="middle" font-size="11.5" fill="#334155">para 1 Hz con clk_sys = 125 MHz: Y = 125 000 000 / (2 x 1) − 3 = 62 499 997</text>
+  <text x="430" y="669" text-anchor="middle" font-size="11.5" fill="#334155">(los 3 ciclos extra son las instrucciones mov y set, fuera del bucle jmp de cada mitad)</text>
+</svg>

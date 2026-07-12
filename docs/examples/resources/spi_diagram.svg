@@ -1,0 +1,78 @@
+<svg viewBox="0 0 860 760" xmlns="http://www.w3.org/2000/svg" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="860" height="760" fill="#FFFFFF"/>
+
+  <text x="430" y="20" text-anchor="middle" font-size="16" font-weight="bold" fill="#0F172A">Flujo de configuracion SPI (lectura de CHIP_ID del BMI270)</text>
+
+  <!-- Box 1 -->
+  <rect x="350" y="30" width="160" height="36" rx="18" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="53" text-anchor="middle" font-size="13" fill="#1E293B">Inicio</text>
+  <line x1="430" y1="66" x2="430" y2="86" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Box 2 -->
+  <rect x="150" y="86" width="560" height="40" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="110" text-anchor="middle" font-size="12.5" fill="#1E293B">baud_real = spi_init(SPI_PORT, 1000000);</text>
+  <line x1="430" y1="126" x2="430" y2="146" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Box 3 -->
+  <rect x="150" y="146" width="560" height="40" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="170" text-anchor="middle" font-size="12.5" fill="#1E293B">spi_set_format(SPI_PORT, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);</text>
+  <line x1="430" y1="186" x2="430" y2="206" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Box 4 -->
+  <rect x="150" y="206" width="560" height="56" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="228" text-anchor="middle" font-size="12.5" fill="#1E293B">gpio_set_function(SCK, MOSI, MISO, GPIO_FUNC_SPI);</text>
+  <text x="430" y="248" text-anchor="middle" font-size="12.5" fill="#1E293B">gpio_init(CS); gpio_set_dir(CS, OUT); gpio_put(CS, 1);</text>
+  <line x1="430" y1="262" x2="430" y2="282" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Box 5 -->
+  <rect x="150" y="282" width="560" height="40" rx="8" fill="#FDE68A" stroke="#D97706" stroke-width="1.5"/>
+  <text x="430" y="306" text-anchor="middle" font-size="12.5" fill="#1E293B">Lectura de descarte: fuerza al BMI270 a modo SPI</text>
+  <line x1="430" y1="322" x2="430" y2="342" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Box 6 -->
+  <rect x="150" y="342" width="560" height="56" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="430" y="364" text-anchor="middle" font-size="12.5" fill="#1E293B">while (1) leer CHIP_ID</text>
+  <text x="430" y="384" text-anchor="middle" font-size="12.5" fill="#1E293B">comparar con 0x24 e imprimir el resultado</text>
+
+  <path d="M 710 356 C 770 350, 770 390, 710 390" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="793" y="373" text-anchor="middle" font-size="11" fill="#475569">repite</text>
+
+  <line x1="40" y1="420" x2="820" y2="420" stroke="#CBD5E1" stroke-width="1"/>
+
+  <text x="430" y="445" text-anchor="middle" font-size="16" font-weight="bold" fill="#0F172A">Trama de la transaccion (nivel de byte)</text>
+  <text x="430" y="465" text-anchor="middle" font-size="12" fill="#475569">Lectura del registro CHIP_ID (0x00) del BMI270, con dispositivo ya conmutado a modo SPI</text>
+
+  <text x="90" y="484" font-size="12" fill="#334155">CS</text>
+  <polyline points="100,470 140,470 140,490 660,490 660,470 780,470" fill="none" stroke="#2563EB" stroke-width="2"/>
+
+  <text x="90" y="524" font-size="12" fill="#334155">SCK</text>
+  <rect x="140" y="516" width="520" height="14" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1"/>
+  <text x="400" y="546" text-anchor="middle" font-size="11" fill="#475569">16 pulsos de reloj (2 bytes x 8 bits)</text>
+
+  <text x="90" y="580" font-size="12" fill="#334155">MOSI</text>
+  <rect x="140" y="562" width="260" height="30" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.2"/>
+  <text x="270" y="581" text-anchor="middle" font-size="12" fill="#1E293B">0x80</text>
+  <rect x="400" y="562" width="260" height="30" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.2"/>
+  <text x="530" y="581" text-anchor="middle" font-size="12" fill="#1E293B">0x00</text>
+  <text x="270" y="605" text-anchor="middle" font-size="10.5" fill="#475569">CHIP_ID | bit de lectura</text>
+  <text x="530" y="605" text-anchor="middle" font-size="10.5" fill="#475569">relleno</text>
+
+  <text x="90" y="646" font-size="12" fill="#334155">MISO</text>
+  <rect x="140" y="628" width="260" height="30" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.2"/>
+  <text x="270" y="647" text-anchor="middle" font-size="12" fill="#1E293B">dummy</text>
+  <rect x="400" y="628" width="260" height="30" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.2"/>
+  <text x="530" y="647" text-anchor="middle" font-size="12" fill="#1E293B">0x24</text>
+  <text x="270" y="671" text-anchor="middle" font-size="10.5" fill="#475569">se descarta</text>
+  <text x="530" y="671" text-anchor="middle" font-size="10.5" fill="#475569">CHIP_ID real</text>
+
+  <line x1="400" y1="460" x2="400" y2="680" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3,3"/>
+
+  <text x="430" y="712" text-anchor="middle" font-size="13" font-weight="bold" fill="#0F172A">periodo de SCK a 1 MHz = 1 µs/bit  →  2 bytes (16 bits) ≈ 16 µs por transaccion</text>
+  <text x="430" y="734" text-anchor="middle" font-size="11.5" fill="#334155">el BMI270 admite hasta 10 MHz; se usa 1 MHz por margen de seguridad en cableado de protoboard</text>
+</svg>

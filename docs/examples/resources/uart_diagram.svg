@@ -1,0 +1,98 @@
+<svg viewBox="0 0 860 800" xmlns="http://www.w3.org/2000/svg" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="860" height="800" fill="#FFFFFF"/>
+
+  <text x="430" y="20" text-anchor="middle" font-size="16" font-weight="bold" fill="#0F172A">Flujo de configuracion de la UART de hardware</text>
+
+  <!-- Box 1: Inicio -->
+  <rect x="350" y="30" width="160" height="36" rx="18" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="53" text-anchor="middle" font-size="13" fill="#1E293B">Inicio</text>
+  <line x1="430" y1="66" x2="430" y2="86" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Box 2 -->
+  <rect x="150" y="86" width="560" height="40" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="110" text-anchor="middle" font-size="12.5" fill="#1E293B">uart_init(UART_ID, BAUDRATE);</text>
+  <line x1="430" y1="126" x2="430" y2="146" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Box 3 -->
+  <rect x="150" y="146" width="560" height="56" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="168" text-anchor="middle" font-size="12.5" fill="#1E293B">gpio_set_function(TX_PIN, GPIO_FUNC_UART);</text>
+  <text x="430" y="188" text-anchor="middle" font-size="12.5" fill="#1E293B">gpio_set_function(RX_PIN, GPIO_FUNC_UART);</text>
+  <line x1="430" y1="202" x2="430" y2="222" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Box 4 -->
+  <rect x="150" y="222" width="560" height="40" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="246" text-anchor="middle" font-size="12.5" fill="#1E293B">uart_set_format(UART_ID, 8, 1, UART_PARITY_NONE);</text>
+  <line x1="430" y1="262" x2="430" y2="282" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Box 5 -->
+  <rect x="150" y="282" width="560" height="40" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="306" text-anchor="middle" font-size="12.5" fill="#1E293B">uart_set_fifo_enabled(UART_ID, true);</text>
+  <line x1="430" y1="322" x2="430" y2="342" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Box 6 -->
+  <rect x="150" y="342" width="560" height="56" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="430" y="364" text-anchor="middle" font-size="12.5" fill="#1E293B">while (1) si uart_is_readable(UART_ID)</text>
+  <text x="430" y="384" text-anchor="middle" font-size="12.5" fill="#1E293B">c = uart_getc(...); uart_putc(..., c);  (eco)</text>
+
+  <path d="M 710 356 C 770 350, 770 390, 710 390" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="793" y="373" text-anchor="middle" font-size="11" fill="#475569">repite</text>
+
+  <line x1="40" y1="420" x2="820" y2="420" stroke="#CBD5E1" stroke-width="1"/>
+
+  <text x="430" y="445" text-anchor="middle" font-size="16" font-weight="bold" fill="#0F172A">Trama de un byte transmitido (nivel de bits)</text>
+  <text x="430" y="465" text-anchor="middle" font-size="12" fill="#475569">Ejemplo: transmision del caracter 'A' (0x41 = 0100 0001), bits de datos en orden LSB primero</text>
+
+  <text x="45" y="546" font-size="11" fill="#334155">1 (reposo)</text>
+  <text x="55" y="594" font-size="11" fill="#334155">0</text>
+
+  <!-- signal line -->
+  <polyline points="40,550 100,550 100,590 160,590 160,550 220,550 220,590 520,590 520,550 580,550 580,590 640,590 640,550 760,550"
+            fill="none" stroke="#2563EB" stroke-width="2.2"/>
+
+  <!-- segment boundary guides -->
+  <line x1="100" y1="540" x2="100" y2="600" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="160" y1="540" x2="160" y2="600" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="220" y1="540" x2="220" y2="600" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="280" y1="540" x2="280" y2="600" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="340" y1="540" x2="340" y2="600" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="400" y1="540" x2="400" y2="600" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="460" y1="540" x2="460" y2="600" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="520" y1="540" x2="520" y2="600" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="580" y1="540" x2="580" y2="600" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="640" y1="540" x2="640" y2="600" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="700" y1="540" x2="700" y2="600" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+
+  <!-- bit labels -->
+  <text x="130" y="616" text-anchor="middle" font-size="12" fill="#334155">S</text>
+  <text x="190" y="616" text-anchor="middle" font-size="12" fill="#334155">1</text>
+  <text x="250" y="616" text-anchor="middle" font-size="12" fill="#334155">0</text>
+  <text x="310" y="616" text-anchor="middle" font-size="12" fill="#334155">0</text>
+  <text x="370" y="616" text-anchor="middle" font-size="12" fill="#334155">0</text>
+  <text x="430" y="616" text-anchor="middle" font-size="12" fill="#334155">0</text>
+  <text x="490" y="616" text-anchor="middle" font-size="12" fill="#334155">0</text>
+  <text x="550" y="616" text-anchor="middle" font-size="12" fill="#334155">1</text>
+  <text x="610" y="616" text-anchor="middle" font-size="12" fill="#334155">0</text>
+  <text x="670" y="616" text-anchor="middle" font-size="12" fill="#334155">P</text>
+  <text x="430" y="634" text-anchor="middle" font-size="11" fill="#475569">S = start   ·   P = parada (stop)   ·   datos: 1000 0010 (LSB primero) = 0x41</text>
+
+  <!-- bit time brace -->
+  <line x1="100" y1="648" x2="160" y2="648" stroke="#475569" stroke-width="1"/>
+  <line x1="100" y1="643" x2="100" y2="653" stroke="#475569" stroke-width="1"/>
+  <line x1="160" y1="643" x2="160" y2="653" stroke="#475569" stroke-width="1"/>
+  <text x="130" y="665" text-anchor="middle" font-size="10.5" fill="#475569">tiempo de bit</text>
+
+  <!-- full frame brace -->
+  <line x1="100" y1="682" x2="700" y2="682" stroke="#475569" stroke-width="1"/>
+  <line x1="100" y1="677" x2="100" y2="687" stroke="#475569" stroke-width="1"/>
+  <line x1="700" y1="677" x2="700" y2="687" stroke="#475569" stroke-width="1"/>
+  <text x="400" y="699" text-anchor="middle" font-size="11.5" fill="#475569">trama completa = 10 bits (1 start + 8 datos + 1 parada)</text>
+
+  <text x="430" y="730" text-anchor="middle" font-size="13" font-weight="bold" fill="#0F172A">tiempo de bit = 1 / 115200 ≈ 8.68 µs   →   trama = 10 × 8.68 µs ≈ 86.8 µs por byte</text>
+  <text x="430" y="750" text-anchor="middle" font-size="11.5" fill="#334155">tasa efectiva de datos = 115200 / 10 = 11 520 bytes/segundo (descontando los bits de start y parada)</text>
+</svg>

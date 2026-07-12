@@ -1,273 +1,137 @@
-# Ejemplo 02: Comunicación UART
+# UART: Comunicación Serial Asíncrona
 
-Una vez cubiertos el control de un GPIO como salida ([ejemplo 00](./00_blink.md)) y como entrada digital ([ejemplo 01](./02_gpio.md)), la presente práctica introduce la comunicación serial asíncrona (UART), el primero de los protocolos de comunicación abordados en el Módulo II. Se presentan dos enfoques complementarios: el puerto serial virtual expuesto sobre USB, ya empleado de manera implícita en los ejemplos anteriores para mostrar mensajes de depuración, y el periférico UART de hardware dedicado, que permite establecer comunicación con un dispositivo externo independiente de la computadora host. Contrastar ambos enfoques resulta relevante porque, si bien comparten buena parte de la interfaz de programación (`printf`, `getchar`, etc.), corresponden a mecanismos de transporte físicamente distintos.
+Esta práctica introduce el periférico UART de hardware del RP2040 —distinto del puerto serial virtual sobre USB ya utilizado en la práctica de Serial—, empleado para comunicarse con dispositivos externos reales: módulos GPS, sensores, adaptadores Bluetooth o Wi-Fi, u otros microcontroladores. Para esta verificación se aprovecha el conversor USB-serial CH340 disponible en el UNIT DevLab MultiHub Shield: la UART0 del RP2040 se conecta a él en cruce (TX con RX, RX con TX), de modo que una terminal abierta sobre el puerto que expone el CH340 permita enviar y recibir datos reales hacia y desde la placa.
 
-## Objetivo general
- 
-Configurar la comunicación serial asíncrona (UART) del RP2040 para la transmisión y recepción de datos, contrastando el uso del puerto serial virtual expuesto por USB (`stdio_usb`) frente al periférico UART de hardware dedicado (UART0), y estableciendo el formato de trama y la velocidad de transmisión requeridos para una comunicación confiable.
+## Concepto Teórico
 
-## Primera parte: UART sobre USB (stdio_usb)
- 
-### Hardware requerido (USB)
- 
-| Componente | Cantidad | Observaciones |
+A diferencia de I2C o SPI, la UART es un protocolo asíncrono: no existe una línea de reloj compartida entre transmisor y receptor, por lo que ambos deben acordar de antemano la velocidad de transmisión (*baudrate*, en bits por segundo) para interpretar correctamente la señal. Para delimitar dónde inicia y termina cada byte sobre una línea que, en reposo, permanece en nivel alto, cada trama agrega un bit de inicio (*start*, siempre en nivel bajo) antes de los bits de datos, y uno o más bits de parada (*stop*, en nivel alto) al final. El formato empleado en esta práctica —8 bits de datos, sin paridad, 1 bit de parada— se abrevia como "8N1", y es el más común en la práctica.
+
+El siguiente diagrama resume la configuración empleada en el código y muestra, a nivel de bits, cómo se ve una trama completa sobre la línea:
+
+<div align="center">
+  <img src="../resources/uart_diagram.svg" width="600px" alt="Flujo de configuracion de la UART y trama de bits de un byte transmitido en formato 8N1">
+</div>
+
+**Cálculo del tiempo de trama.** Con un *baudrate* de 115200 bits por segundo, el tiempo que ocupa un solo bit sobre la línea es:
+
+```
+tiempo_de_bit = 1 / 115200 ≈ 8.68 µs
+```
+
+Con el formato 8N1, cada byte transmitido ocupa 10 bits en total (1 de inicio + 8 de datos + 1 de parada), de modo que:
+
+```
+tiempo_de_trama = 10 × 8.68 µs ≈ 86.8 µs por byte
+tasa_efectiva = 115200 / 10 = 11 520 bytes/segundo
+```
+
+Nótese que la tasa efectiva de datos (bytes útiles por segundo) es menor que el *baudrate* nominal, precisamente porque dos de cada diez bits transmitidos son de encuadre (inicio y parada) y no forman parte del dato. El RP2040 dispone de dos periféricos UART independientes (`uart0`, `uart1`), cada uno con una FIFO interna de hardware que amortigua ráfagas cortas de bytes sin requerir que el programa los atienda de manera inmediata.
+
+## Hardware y Conexiones
+
+| Señal (RP2040) | Pin del RP2040 | Conexión en el CH340 (Shield) |
 |---|---|---|
-| Placa con RP2040 (Raspberry Pi Pico o equivalente) | 1 | Plataforma empleada en el Módulo II |
- 
-### Conexiones (USB)
- 
-No se requiere ninguna conexión adicional. La comunicación se realiza a través del mismo cable USB empleado para la programación y consola de la placa, mediante el puerto serial virtual (`stdio_usb`) que expone el SDK.
- 
-### Estructura del proyecto (USB)
- 
-```
-Practice_UART_USB_01/
-├── build
-├── CMakeLists.txt
-├── pico_sdk_import.cmake
-└── Practice_UART_USB_01.c
-```
- 
-### CMakeLists.txt (USB)
- 
-```cmake
-cmake_minimum_required(VERSION 3.13)
- 
-include(pico_sdk_import.cmake)
- 
-# ─────────────────────────────────────────────
-# CONFIGURACIÓN DEL PROYECTO
-# Generado automáticamente por pico-new
-# ─────────────────────────────────────────────
-set(PROJECT_NAME    "Practice_UART_USB_01")
-set(PROJECT_SOURCES "Practice_UART_USB_01.c")
-set(PICO_BOARD      "pico")
- 
-set(PROJECT_LIBS
-    pico_stdlib
-)
-# ─────────────────────────────────────────────
-# NO MODIFICAR DE AQUÍ EN ADELANTE
-# ─────────────────────────────────────────────
- 
-project(${PROJECT_NAME})
- 
-pico_sdk_init()
- 
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
- 
-target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBS})
- 
-pico_add_extra_outputs(${PROJECT_NAME})
- 
-pico_enable_stdio_usb(${PROJECT_NAME} 1)
-pico_enable_stdio_uart(${PROJECT_NAME} 0)
-```
- 
-### Código fuente (USB) — `Practice_UART_USB_01.c`
- 
-```c
-#include <stdio.h>
-#include "pico/stdlib.h"
- 
-int main() {
-    stdio_init_all();
- 
-    printf("=== Eco por UART sobre USB ===\n");
-    printf("Escriba un caracter:\n");
- 
-    while (true) {
-        int c = getchar_timeout_us(0);  // Lectura no bloqueante
- 
-        if (c != PICO_ERROR_TIMEOUT) {
-            printf("Recibido: '%c' (0x%02X)\n", c, c);
-            putchar(c);  // Retransmite el mismo caracter (eco)
-        }
-    }
-}
-```
- 
-### Explicación (USB)
- 
-`stdio_init_all()` habilita, entre otras interfaces, el puerto serial virtual sobre USB cuando `pico_enable_stdio_usb` está activo en el CMakeLists; a partir de ese punto, `printf`, `putchar` y `getchar_timeout_us` operan sobre dicho canal de la misma manera en que lo harían sobre una UART física. `getchar_timeout_us(0)` realiza una lectura no bloqueante: retorna de inmediato con el valor `PICO_ERROR_TIMEOUT` cuando no hay datos disponibles, en lugar de detener la ejecución del programa a la espera de un caracter. Este enfoque resulta conveniente para prototipos rápidos, aunque no sustituye a la UART de hardware cuando se requiere comunicación con un dispositivo externo distinto de la computadora host.
- 
-### Errores comunes (USB)
- 
-| Síntoma | Causa típica |
-|---|---|
-| No se observa ningún mensaje en la terminal | `pico_enable_stdio_usb` no está habilitado con el valor `1` en el CMakeLists |
-| Los caracteres escritos no se reflejan de vuelta | La terminal utilizada no está mostrando el dato retransmitido por `putchar(c)`; verificar la configuración de eco local de la terminal |
-| El programa parece detenerse esperando entrada | Se sustituyó `getchar_timeout_us(0)` por `getchar()`, que sí es bloqueante |
- 
----
+| TX (UART0) | GP0 | RX del CH340 |
+| RX (UART0) | GP1 | TX del CH340 |
+| GND | GND | GND común (ya compartido a través del Shield) |
 
-## Segunda parte: UART de hardware (UART0)
+> **Nota:** las líneas se conectan en cruce —el TX de un extremo hacia el RX del otro—, como es habitual en cualquier enlace UART punto a punto; conectar TX con TX y RX con RX es un error común y evita toda comunicación.
 
-### Hardware requerido (hardware)
- 
-| Componente | Cantidad | Observaciones |
-|---|---|---|
-| Placa con RP2040 (Raspberry Pi Pico o equivalente) | 1 | Plataforma empleada en el Módulo II |
-| UNIT DevLab MultiHub Shield | 1 | Plataforma empleada en el Modulo II |
-| Adaptador USB-serial (FTDI, CP2102, CH340 o equivalente) | 1 | Incluido en el UNIT DevLab MultiHub Shield |
-| Cables de conexión (jumper) | 3 (o 1 en loopback) | Para las señales TX, RX y GND |
-
-| Señal | Pin del RP2040 | Descripción |
-|---|---|---|
-| TX (UART0) | GP0 | Salida de datos; se conecta al pin RX del adaptador USB-serial externo |
-| RX (UART0) | GP1 | Entrada de datos; se conecta al pin TX del adaptador USB-serial externo |
-| GND | GND | Referencia de tierra común entre la placa y el adaptador |
- 
-> **Nota:** en ausencia de un adaptador USB-serial externo, puede realizarse una prueba de lazo cerrado (loopback) conectando directamente GP0 con GP1 mediante un jumper; en ese caso, el propio RP2040 recibe los datos que transmite.
-
-### Estructura del proyecto (hardware)
- 
-```
-Practice_UART_05/
-├── build
-├── CMakeLists.txt
-├── pico_sdk_import.cmake
-└── Practice_UART_05.c
-```
-
-## CMakeLists.txt
+## Configuración del Proyecto (CMake)
 
 ```cmake
-cmake_minimum_required(VERSION 3.13)
-
-include(pico_sdk_import.cmake)
-
-# ─────────────────────────────────────────────
-# CONFIGURACIÓN DEL PROYECTO
-# Generado automáticamente por pico-new
-# ─────────────────────────────────────────────
-set(PROJECT_NAME    "Practice_UART_05")
-set(PROJECT_SOURCES "Practice_UART_05.c")
-set(PICO_BOARD      "pico")
-
-set(PROJECT_LIBS
+target_link_libraries(${PROJECT_NAME}
     pico_stdlib
     hardware_uart
 )
-# ─────────────────────────────────────────────
-# NO MODIFICAR DE AQUÍ EN ADELANTE
-# ─────────────────────────────────────────────
-
-project(${PROJECT_NAME})
-
-pico_sdk_init()
-
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
-
-target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBS})
-
-pico_add_extra_outputs(${PROJECT_NAME})
-
-
 ```
 
-No se habilita `pico_enable_stdio_usb` ni `_uart`: el ejemplo no usa `printf`, solo llamadas directas a `hardware_uart`.
-
-### Código fuente (hardware) — `Practice_UART_05.c`
+## Código Fuente
 
 ```c
+/**
+ * @file Practice_UART_08.c
+ * @brief Eco por UART0 hacia el conversor USB-serial CH340 del Shield
+ *
+ * @author obviousfancylab
+ * @board  pico
+ * @sdk    Raspberry Pi Pico SDK 2.2.0
+ */
+
 /* ─── Includes ─────────────────────────────────────────── */
+#include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
 
 /* ─── Defines ──────────────────────────────────────────── */
-#define UART_TX0 0
-#define UART_RX0 1
-#define UART_BAUD_RATE 115200
-#define UART_ID uart0
-#define LED_PIN 25
+#define UART_ID    uart0
+#define BAUDRATE   115200
+#define TX_PIN     0
+#define RX_PIN     1
 
 /* ─── Main ─────────────────────────────────────────────── */
 int main() {
-    //stdio_init_all();
-    uart_init(UART_ID, UART_BAUD_RATE);
+    stdio_init_all();
 
-    // Configurar la función de los pines GPIO para UART
-    gpio_set_function(UART_TX0, GPIO_FUNC_UART);
-    gpio_set_function(UART_RX0, GPIO_FUNC_UART);
-    // Configurar LED integrado para feedback visual
-    gpio_init(LED_PIN);
-    gpio_set_dir(LED_PIN, GPIO_OUT);
+    uint baud_real = uart_init(UART_ID, BAUDRATE);
+    gpio_set_function(TX_PIN, GPIO_FUNC_UART);
+    gpio_set_function(RX_PIN, GPIO_FUNC_UART);
 
-    // Mensaje de bienvenida inicial
-    uart_puts(UART_ID, "\r\n--- UART Eco e Interacción Iniciada ---\r\n");
-    uart_puts(UART_ID, "Envía 'E' para encender el LED, 'A' para apagarlo.\r\n");
+    uart_set_format(UART_ID, 8, 1, UART_PARITY_NONE);  // 8N1
+    uart_set_fifo_enabled(UART_ID, true);
 
+    printf("Baudrate solicitado: %d, baudrate real: %u\n", BAUDRATE, baud_real);
+    printf("Esperando caracteres desde el CH340...\n");
 
     while (1) {
-    if (uart_is_readable(UART_ID)) {
-            // Leer el caracter entrante (Bloqueante solo si no se validara antes)
-            char ch = uart_getc(UART_ID);
-
-            // 1. Efecto Eco: Devolver el caracter recibido al usuario
-            uart_puts(UART_ID, "Recibido: ");
-            uart_putc(UART_ID, ch);
-            uart_puts(UART_ID, "\r\n");
-
-            // 2. Lógica de control básica
-            if (ch == 'E' || ch == 'e') {
-                gpio_put(LED_PIN, 1);
-                uart_puts(UART_ID, ">> LED ENCENDIDO\r\n");
-            } 
-            else if (ch == 'A' || ch == 'a') {
-                gpio_put(LED_PIN, 0);
-                uart_puts(UART_ID, ">> LED APAGADO\r\n");
-            }
+        if (uart_is_readable(UART_ID)) {
+            char recibido = uart_getc(UART_ID);
+            uart_putc(UART_ID, recibido);                     // Eco de vuelta hacia el CH340
+            printf("Recibido por UART0: '%c'\n", recibido);    // Reporte por USB
         }
     }
 }
-
 ```
 
-### Explicación (hardware)
- 
-A diferencia del puerto serial virtual sobre USB, la UART de hardware requiere configurar explícitamente tres aspectos: la velocidad de transmisión mediante `uart_init`, la función alternativa de los pines GP0/GP1 mediante `gpio_set_function(..., GPIO_FUNC_UART)` —sin esta llamada, los pines permanecen en su función GPIO por defecto y no quedan conectados al periférico UART— y el formato de trama mediante `uart_set_format`, en este caso 8N1 (8 bits de datos, sin paridad, 1 bit de parada), que debe coincidir con la configuración del dispositivo externo. La FIFO de hardware, habilitada mediante `uart_set_fifo_enabled`, amortigua ráfagas cortas de datos sin requerir que el programa atienda cada byte de manera inmediata; no obstante, es necesario consultarla con suficiente frecuencia para evitar su desbordamiento, razón por la cual el ciclo principal se ejecuta cada 10 ms. El reporte por `printf` se mantiene sobre USB, de modo que ambos canales —UART0 y el puerto virtual— pueden observarse de forma simultánea y por separado.
- 
-### Errores comunes (hardware)
- 
-| Síntoma | Causa típica |
-|---|---|
-| No se transmite ni recibe nada por UART0 | Falta `gpio_set_function()` sobre GP0/GP1, o los pines quedaron configurados con la función incorrecta |
-| Se reciben caracteres corruptos o ilegibles | Velocidad (baudrate) o formato de trama distintos entre el RP2040 y el dispositivo externo |
-| Se pierden bytes durante ráfagas de datos | FIFO no habilitada, o el ciclo principal consulta `uart_is_readable()` con demasiada poca frecuencia |
-| Error de *linking* durante la compilación | Ausencia de `hardware_uart` en `target_link_libraries` |
- 
----
- 
-## Compilación y carga
- 
-Ambas partes se compilan y cargan de la misma manera, mediante el depurador SWD (CH552), tal como se describe en el [ejemplo 00](./00_blink.md):
- 
-```bash
-pico-flash
-```
- 
-Consúltese la [configuración del entorno](../../guide/devlab.md#cargar-el-programa) para el detalle del procedimiento.
- 
+## Análisis del Código
+
+`uart_init(UART_ID, BAUDRATE)` habilita el periférico y configura el generador de baudrate; retorna la velocidad real alcanzada, que puede diferir ligeramente de la solicitada, ya que internamente se deriva de un divisor entero sobre el reloj del periférico y no todo valor de *baudrate* es exactamente representable. `gpio_set_function()` sobre ambos pines es indispensable: sin ella, GP0 y GP1 permanecen en su función GPIO por defecto y no quedan conectados al periférico UART. `uart_set_format(UART_ID, 8, 1, UART_PARITY_NONE)` fija el formato 8N1 descrito en el Concepto Teórico. `uart_set_fifo_enabled(true)` habilita el almacenamiento temporal de hardware, útil si el programa no atiende cada byte de inmediato.
+
+Dentro del ciclo principal, `uart_is_readable(UART_ID)` consulta, sin bloquear, si hay al menos un byte disponible en la FIFO de recepción. Cuando lo hay, `uart_getc()` lo retira y `uart_putc()` lo retransmite de inmediato hacia el CH340 —de modo que cada carácter escrito en la terminal conectada a él se ve reflejado de vuelta—, mientras que el `printf` deja, además, un registro de cada carácter recibido sobre el puerto USB. A diferencia de una prueba de *loopback* consigo misma, aquí el ritmo de la comunicación lo marca por completo quien escribe en la terminal del CH340: el programa no transmite nada por iniciativa propia.
+
 ## Verificación
- 
-Ábrase una terminal serial sobre el puerto USB-CDC que expone la placa (por ejemplo, `/dev/ttyACM0` en Linux) a 115200 baudios:
- 
-```bash
-minicom -b 115200 -D /dev/ttyACM0
-```
- 
-En la primera parte, cada caracter escrito en la terminal debe reflejarse de vuelta (eco), acompañado de su valor hexadecimal. En la segunda parte, deben observarse por USB los reportes de cada byte recibido por UART0; si se emplea un adaptador USB-serial externo, dicho adaptador puede monitorearse desde una segunda terminal en el host para confirmar la recepción de los datos transmitidos por el RP2040.
- 
+
+Esta práctica requiere dos terminales seriales abiertas de manera simultánea:
+
+1. Sobre el puerto USB-CDC propio de la placa (por ejemplo, `/dev/ttyACM0` en Linux), a 115200 baudios, para observar el registro por `printf`:
+
+   ```bash
+   minicom -b 115200 -D /dev/ttyACM0
+   ```
+
+2. Sobre el puerto que expone el CH340 del Shield (por ejemplo, `/dev/ttyUSB0` en Linux — un dispositivo distinto al anterior), también a 115200 baudios, para escribir caracteres y observar su eco:
+
+   ```bash
+   minicom -b 115200 -D /dev/ttyUSB0
+   ```
+
+Al escribir cualquier carácter en la segunda terminal, debe verse reflejado de inmediato en esa misma terminal (el eco enviado por la placa), y debe aparecer también una línea `Recibido por UART0: 'X'` en la primera terminal, confirmando que el dato efectivamente llegó por RX y fue procesado por el programa.
+
 <div align="center">
-  <img src="../resources/uart5.png" width="300px" alt="Comunicación UART mostrada en terminal serial">
+  <img src="../resources/uartpractice8.png" width="300px" alt="Mensajes de eco por loopback UART en terminal serial">
   <p><em>Salida esperada en la terminal serial</em></p>
 </div>
-## Variantes
- 
-- Implementar un shell interactivo simple que reconozca comandos de texto (por ejemplo, `help`, `led on`, `led off`, `status`) y ejecute la acción correspondiente sobre el LED del [ejemplo 00](./00_blink.md).
-- Sustituir el sondeo (`uart_is_readable`) por una interrupción de recepción (`irq_set_exclusive_handler` sobre `UART0_IRQ`), almacenando los datos en un buffer circular para procesarlos fuera de la rutina de interrupción.
-- Diseñar un parser de comandos con argumentos (por ejemplo, `led 1 on`).
-- Definir un protocolo binario simple con verificación mediante checksum.
-- Retransmitir datos entre UART0 y UART1 a manera de puente (*bridge*) entre dos dispositivos seriales.
- 
+
+## Errores Comunes y Variantes
+
+| Síntoma | Causa típica |
+|---|---|
+| Nada de lo escrito en la terminal del CH340 se refleja de vuelta | Conexión TX/RX sin cruzar (TX con TX, RX con RX en vez de TX con RX); revísese también el GND común |
+| Se recibe siempre el mismo carácter o datos corruptos | *Baudrate* configurado de forma distinta entre la terminal del CH340 y `BAUDRATE` en el código |
+| Error de *linking* durante la compilación | Ausencia de `hardware_uart` en `target_link_libraries` |
+
+**Variantes:**
+
+- Cambiar `BAUDRATE` a distintos valores (configurando la terminal del CH340 igual en cada caso) y comparar, mediante `baud_real`, cuánto se aleja el valor efectivamente alcanzado del solicitado.
+- Convertir los caracteres recibidos a mayúsculas antes de retransmitirlos, en lugar de un eco literal.
+- Agregar un bit de paridad (`UART_PARITY_EVEN` en lugar de `UART_PARITY_NONE`) tanto en el código como en la configuración de la terminal, y forzar una discrepancia deliberada para observar su efecto.

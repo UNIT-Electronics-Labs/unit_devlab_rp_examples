@@ -1,0 +1,85 @@
+<svg viewBox="0 0 860 780" xmlns="http://www.w3.org/2000/svg" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+    <marker id="arrowg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7C3AED"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="860" height="780" fill="#FFFFFF"/>
+
+  <text x="430" y="20" text-anchor="middle" font-size="16" font-weight="bold" fill="#0F172A">Flujo entre Core0 y Core1, comunicados por la FIFO del SIO</text>
+
+  <text x="220" y="45" text-anchor="middle" font-size="13" font-weight="bold" fill="#2563EB">Core 0 (arranca en el reset)</text>
+  <text x="640" y="45" text-anchor="middle" font-size="13" font-weight="bold" fill="#7C3AED">Core 1 (lanzado por Core0)</text>
+
+  <!-- Core0 column -->
+  <rect x="50" y="55" width="340" height="36" rx="18" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="220" y="78" text-anchor="middle" font-size="12" fill="#1E293B">Inicio</text>
+  <line x1="220" y1="91" x2="220" y2="106" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+  <rect x="50" y="106" width="340" height="36" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="220" y="128" text-anchor="middle" font-size="11.5" fill="#1E293B">stdio_init_all();</text>
+  <line x1="220" y1="142" x2="220" y2="157" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+  <rect x="50" y="157" width="340" height="40" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="220" y="180" text-anchor="middle" font-size="11.5" fill="#1E293B">multicore_launch_core1(core1_main);</text>
+  <line x1="220" y1="197" x2="220" y2="212" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+  <rect x="50" y="212" width="340" height="66" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="220" y="234" text-anchor="middle" font-size="11.5" fill="#1E293B">while (1):</text>
+  <text x="220" y="252" text-anchor="middle" font-size="11.5" fill="#1E293B">multicore_fifo_push_blocking(intervalo);</text>
+  <text x="220" y="270" text-anchor="middle" font-size="11.5" fill="#1E293B">printf(...); sleep_ms(4000); siguiente valor;</text>
+
+  <path d="M 40 230 C 10 230, 10 262, 40 262" fill="none" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+  <!-- Core1 column -->
+  <rect x="470" y="125" width="340" height="36" rx="18" fill="#F3E8FF" stroke="#7C3AED" stroke-width="1.5"/>
+  <text x="640" y="148" text-anchor="middle" font-size="12" fill="#1E293B">Core1 arranca</text>
+  <line x1="640" y1="161" x2="640" y2="176" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+  <rect x="470" y="176" width="340" height="36" rx="8" fill="#F3E8FF" stroke="#7C3AED" stroke-width="1.5"/>
+  <text x="640" y="198" text-anchor="middle" font-size="11.5" fill="#1E293B">gpio_init(LED); gpio_set_dir(LED, OUT);</text>
+  <line x1="640" y1="212" x2="640" y2="227" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+  <rect x="470" y="227" width="340" height="66" rx="8" fill="#FDE68A" stroke="#D97706" stroke-width="1.5"/>
+  <text x="640" y="249" text-anchor="middle" font-size="11.5" fill="#1E293B">while (1):</text>
+  <text x="640" y="267" text-anchor="middle" font-size="11.5" fill="#1E293B">si multicore_fifo_rvalid(): intervalo = pop_blocking();</text>
+  <text x="640" y="285" text-anchor="middle" font-size="11.5" fill="#1E293B">parpadea LED usando ese intervalo</text>
+
+  <path d="M 820 243 C 850 243, 850 277, 820 277" fill="none" stroke="#475569" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+  <!-- FIFO connector -->
+  <line x1="390" y1="245" x2="470" y2="260" stroke="#7C3AED" stroke-width="2" marker-end="url(#arrowg)"/>
+  <text x="430" y="315" text-anchor="middle" font-size="11.5" fill="#7C3AED" font-weight="bold">FIFO del SIO</text>
+  <text x="430" y="332" text-anchor="middle" font-size="10.5" fill="#7C3AED">(8 palabras de 32 bits por direccion)</text>
+
+  <line x1="40" y1="360" x2="820" y2="360" stroke="#CBD5E1" stroke-width="1"/>
+
+  <text x="430" y="385" text-anchor="middle" font-size="16" font-weight="bold" fill="#0F172A">Efecto de los mensajes recibidos sobre el parpadeo del LED (Core1)</text>
+
+  <text x="90" y="415" font-size="11.5" fill="#334155">Core0 envia:</text>
+  <text x="150" y="415" font-size="11" fill="#2563EB">500 ms</text>
+  <text x="400" y="415" font-size="11" fill="#2563EB">100 ms</text>
+  <text x="620" y="415" font-size="11" fill="#2563EB">250 ms</text>
+
+  <line x1="80" y1="430" x2="80" y2="450" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="320" y1="430" x2="320" y2="450" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="520" y1="430" x2="520" y2="450" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3,3"/>
+
+  <text x="90" y="465" font-size="12" fill="#334155">LED (Core1)</text>
+  <!-- zona 500ms: periodo lento (2 ciclos en 240px) -->
+  <polyline points="80,480 200,480 200,510 320,510 320,480"
+            fill="none" stroke="#16A34A" stroke-width="2.2"/>
+  <!-- zona 100ms: periodo rapido (varios ciclos en 200px) -->
+  <polyline points="320,480 350,480 350,510 380,510 380,480 410,480 410,510 440,510 440,480 470,480 470,510 500,510 500,480 520,480"
+            fill="none" stroke="#16A34A" stroke-width="2.2"/>
+  <!-- zona 250ms: periodo intermedio -->
+  <polyline points="520,480 580,480 580,510 640,510 640,480 700,480 700,510 760,510 760,480 780,480"
+            fill="none" stroke="#16A34A" stroke-width="2.2"/>
+
+  <text x="430" y="545" text-anchor="middle" font-size="13" font-weight="bold" fill="#0F172A">margen de la FIFO: Core1 revisa cada 200 ms (caso mas rapido) frente a un envio de Core0 cada 4000 ms</text>
+  <text x="430" y="567" text-anchor="middle" font-size="11.5" fill="#334155">margen ≈ 4000 / 200 = 20x — muy por encima de lo necesario para evitar que la FIFO (8 palabras) se llene</text>
+</svg>
