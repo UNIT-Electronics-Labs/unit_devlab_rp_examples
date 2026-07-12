@@ -97,7 +97,7 @@ int main() {
 El LED integrado debe encender y apagar cada 500 ms, de manera indistinguible en apariencia del resultado de Blink. La diferencia no es visual sino de diseño: el parpadeo ya no depende de que el ciclo principal permanezca disponible para ejecutar `sleep_ms()`, sino que ocurre de forma independiente mediante una interrupción de hardware.
 
 <div align="center">
-  <img src="../resources/timerpractice7.png" width="300px" alt="LED integrado parpadeando durante la practica de Timer">
+  <img src="../resources/adcpractice4.png" width="300px" alt="LED integrado parpadeando durante la practica de Timer">
   <p><em>Estado esperado del LED integrado durante la práctica</em></p>
 </div>
 

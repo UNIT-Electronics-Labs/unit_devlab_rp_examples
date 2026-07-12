@@ -115,7 +115,7 @@ minicom -b 115200 -D /dev/ttyACM0
 ```
 
 <div align="center">
-  <img src="../resources/multicorepractice11.png" width="300px" alt="LED integrado parpadeando a distintas velocidades durante la practica de Multicore">
+  <img src="../resources/blinkpractice1.png" width="300px" alt="LED integrado parpadeando a distintas velocidades durante la practica de Multicore">
   <p><em>Estado esperado del LED y de la terminal serial durante la práctica</em></p>
 </div>
 

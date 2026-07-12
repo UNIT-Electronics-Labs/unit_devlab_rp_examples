@@ -153,7 +153,7 @@ minicom -b 115200 -D /dev/ttyACM0
 Cada segundo debe imprimirse un mensaje confirmando la detección del BMI270 con `CHIP_ID = 0x24`.
 
 <div align="center">
-  <img src="../resources/spipractice10.png" width="300px" alt="Deteccion del BMI270 mostrada en terminal serial">
+  <img src="../resources/adcpractice3.png" width="300px" alt="Deteccion del BMI270 mostrada en terminal serial">
   <p><em>Salida esperada en la terminal serial</em></p>
 </div>
 

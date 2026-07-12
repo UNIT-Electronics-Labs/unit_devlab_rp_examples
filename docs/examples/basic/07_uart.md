@@ -118,7 +118,7 @@ Esta práctica requiere dos terminales seriales abiertas de manera simultánea:
 Al escribir cualquier carácter en la segunda terminal, debe verse reflejado de inmediato en esa misma terminal (el eco enviado por la placa), y debe aparecer también una línea `Recibido por UART0: 'X'` en la primera terminal, confirmando que el dato efectivamente llegó por RX y fue procesado por el programa.
 
 <div align="center">
-  <img src="../resources/uartpractice8.png" width="300px" alt="Mensajes de eco por loopback UART en terminal serial">
+  <img src="../resources/adcpractice3.png" width="300px" alt="Mensajes de eco por loopback UART en terminal serial">
   <p><em>Salida esperada en la terminal serial</em></p>
 </div>
 

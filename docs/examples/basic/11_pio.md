@@ -145,7 +145,7 @@ En `Practice_PIO_12.c`, `pio_add_program()` carga el programa ensamblado en la m
 El LED integrado debe encender y apagar a intervalos de un segundo, exactamente como en la práctica de Blink —la diferencia no es visual, sino de diseño: aquí el parpadeo continúa de manera autónoma aunque el procesador esté ocupado con cualquier otra tarea, o incluso detenido.
 
 <div align="center">
-  <img src="../resources/piopractice12.png" width="300px" alt="LED integrado parpadeando mediante PIO">
+  <img src="../resources/adcpractice4.png" width="300px" alt="LED integrado parpadeando mediante PIO">
   <p><em>Estado esperado del LED integrado durante la práctica</em></p>
 </div>
 
