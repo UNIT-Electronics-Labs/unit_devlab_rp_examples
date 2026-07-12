@@ -95,7 +95,7 @@ minicom -b 115200 -D /dev/ttyACM0
 Cada vez que se presione o se libere el botón debe imprimirse de inmediato la línea correspondiente (`Boton presionado` o `Boton liberado`), sin el retardo de 20 ms perceptible en la práctica de GPIO.
 
 <div align="center">
-  <img src="../resources/irqpractice4.png" width="300px" alt="Mensajes Boton presionado y Boton liberado generados por interrupcion en terminal serial">
+  <img src="../resources/adcpractice3.png" width="300px" alt="Mensajes Boton presionado y Boton liberado generados por interrupcion en terminal serial">
   <p><em>Salida esperada en la terminal serial</em></p>
 </div>
 

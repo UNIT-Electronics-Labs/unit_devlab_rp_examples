@@ -77,7 +77,7 @@ minicom -b 115200 -D /dev/ttyACM0
 Debe observarse una lectura de temperatura impresa cada segundo, cercana a la temperatura ambiente, con cierta desviación característica de este sensor no calibrado individualmente en fábrica.
 
 <div align="center">
-  <img src="../resources/adcpractice5.png" width="300px" alt="Lectura de temperatura del sensor interno en terminal serial">
+  <img src="../resources/adcpractice4.png" width="300px" alt="Lectura de temperatura del sensor interno en terminal serial">
   <p><em>Salida esperada en la terminal serial</em></p>
 </div>
 

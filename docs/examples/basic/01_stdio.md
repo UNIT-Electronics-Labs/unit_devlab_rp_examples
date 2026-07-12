@@ -69,7 +69,7 @@ minicom -b 115200 -D /dev/ttyACM0
 Debe observarse una línea `Contador: N` impresa cada segundo, con `N` incrementándose de manera consecutiva y sin saltos ni repeticiones.
 
 <div align="center">
-  <img src="../resources/serialpractice2.png" width="300px" alt="Mensajes Contador incrementandose en terminal serial">
+  <img src="../resources/adcpractice3.png" width="300px" alt="Mensajes Contador incrementandose en terminal serial">
   <p><em>Salida esperada en la terminal serial</em></p>
 </div>
 
