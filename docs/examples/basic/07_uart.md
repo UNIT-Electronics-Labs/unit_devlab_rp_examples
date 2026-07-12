@@ -241,7 +241,7 @@ A diferencia del puerto serial virtual sobre USB, la UART de hardware requiere c
  
 ## Compilación y carga
  
-Ambas partes se compilan y cargan de la misma manera, mediante el depurador SWD (CH552), tal como se describe en el [ejemplo 00](./blink.md):
+Ambas partes se compilan y cargan de la misma manera, mediante el depurador SWD (CH552), tal como se describe en el [ejemplo 00](./00_blink.md):
  
 ```bash
 pico-flash
@@ -265,7 +265,7 @@ En la primera parte, cada caracter escrito en la terminal debe reflejarse de vue
 </div>
 ## Variantes
  
-- Implementar un shell interactivo simple que reconozca comandos de texto (por ejemplo, `help`, `led on`, `led off`, `status`) y ejecute la acción correspondiente sobre el LED del [ejemplo 00](./blink.md).
+- Implementar un shell interactivo simple que reconozca comandos de texto (por ejemplo, `help`, `led on`, `led off`, `status`) y ejecute la acción correspondiente sobre el LED del [ejemplo 00](./00_blink.md).
 - Sustituir el sondeo (`uart_is_readable`) por una interrupción de recepción (`irq_set_exclusive_handler` sobre `UART0_IRQ`), almacenando los datos en un buffer circular para procesarlos fuera de la rutina de interrupción.
 - Diseñar un parser de comandos con argumentos (por ejemplo, `led 1 on`).
 - Definir un protocolo binario simple con verificación mediante checksum.
