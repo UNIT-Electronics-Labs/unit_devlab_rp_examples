@@ -1,6 +1,6 @@
 # Hardware: Microcontrolador, Pinout y Programador
 
-Este documento describe el hardware sobre el que se ejecutan todos los ejemplos: el microcontrolador RP2040, la distribución de pines de la placa utilizada en el seminario, y el adaptador CH552 empleado para compilar, flashear y depurar los proyectos. Se recomienda revisar este documento antes de [Configuración del entorno](./devlab.md) y de los [ejemplos básicos](../examples/basic/blink.md).
+Este documento describe el hardware sobre el que se ejecutan todos los ejemplos: el microcontrolador RP2040, la distribución de pines de la placa utilizada en el seminario, y el adaptador CH552 empleado para compilar, flashear y depurar los proyectos. Se recomienda revisar este documento antes de [Configuración del entorno](./devlab.md) y de los [ejemplos básicos](../examples/basic/00_blink.md).
 
 ## El microcontrolador: RP2040
 

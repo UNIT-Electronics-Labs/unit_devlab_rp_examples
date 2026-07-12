@@ -212,8 +212,8 @@ Un cuadro de 16×16 pixeles rebota horizontalmente en la pantalla. Si la pantall
 ## Variantes
 
 - Agregar una fuente 5×7 y una función `ssd1306_draw_text` para mostrar strings.
-- Controlar la velocidad del rebote con el botón del [ejemplo 01](./gpio.md).
-- Mostrar la temperatura del [ejemplo 03](./adcread.md) en pantalla en vez de imprimirla por USB.
+- Controlar la velocidad del rebote con el botón del [ejemplo 01](./02_gpio.md).
+- Mostrar la temperatura del [ejemplo 03](./04_adc.md) en pantalla en vez de imprimirla por USB.
 - Dibujar dos figuras independientes para practicar composición de framebuffer.
 
 ## Errores comunes
