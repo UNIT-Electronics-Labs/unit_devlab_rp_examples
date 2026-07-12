@@ -21,7 +21,8 @@ export default defineConfig({
           { text: 'Windows', link: '/guide/windows' },
           { text: 'Programación en C con Pico SDK', link: '/guide/c-programming' },
           { text: 'CMakeLists', link: '/guide/CMakeLists' },
-          { text: 'Hardware Usado', link: '/guide/hardware' }
+          { text: 'Hardware Usado', link: '/guide/hardware' },
+          { text: 'Arquitectura ARM', link: '/guide/arm' },
         ]
       },
       {
