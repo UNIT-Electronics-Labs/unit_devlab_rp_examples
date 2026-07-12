@@ -180,7 +180,7 @@ minicom -b 115200 -D /dev/ttyACM0
 Cada 5 segundos debe imprimirse un nuevo escaneo del bus; con el display OLED conectado, debe reportarse un dispositivo en la dirección `0x3C` (o `0x3D`).
 
 <div align="center">
-  <img src="../resources/i2c_scan_terminal.png" width="300px" alt="Resultado del escaneo del bus I2C en terminal serial">
+  <img src="../resources/uart5.png" width="300px" alt="Resultado del escaneo del bus I2C en terminal serial">
   <p><em>Salida esperada en la terminal serial</em></p>
 </div>
 
