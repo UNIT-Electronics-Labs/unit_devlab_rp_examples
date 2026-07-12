@@ -37,18 +37,16 @@ const featureCards = [
 
 <template>
   <main class="home">
-    <!-- Fondo modo claro -->
     <img
       class="wallpaper wallpaper-light"
-      :src="withBase('/fpga-wallpaper-light.png')"
+      :src="withBase('/background.jpg')"
       alt=""
       aria-hidden="true"
     />
 
-    <!-- Fondo modo oscuro -->
     <img
       class="wallpaper wallpaper-dark"
-      :src="withBase('/fpga-wallpaper-dark.png')"
+      :src="withBase('/background.jpg')"
       alt=""
       aria-hidden="true"
     />
@@ -101,32 +99,33 @@ const featureCards = [
   isolation: isolate;
 }
 
-/* Fondo a pantalla completa */
 .wallpaper {
   position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
+
+  inset: -20px;
+
+  width: calc(100vw + 40px);
+  height: calc(100vh + 40px);
+
   object-fit: cover;
   object-position: center;
+
+  filter: blur(12px);
+  transform: scale(1.03);
+
   pointer-events: none;
   user-select: none;
   z-index: -1;
 }
 
-/* Imagen para tema claro */
 .wallpaper-light {
   display: block;
-  opacity: 0.4;
 }
 
-/* Imagen para tema oscuro */
 .wallpaper-dark {
   display: none;
-  opacity: 0.32;
 }
 
-/* Cuando VitePress está en modo oscuro */
 .dark .wallpaper-light {
   display: none;
 }
@@ -146,17 +145,17 @@ const featureCards = [
 h1 {
   max-width: 760px;
   margin: 0 auto;
-  color: var(--vp-c-text-1);
+  color: #000000;
   font-size: clamp(34px, 6vw, 64px);
   line-height: 1.05;
-  letter-spacing: -0.055em;
-  font-weight: 600;
+  letter-spacing: -0.04em;
+  font-weight: 800;
 }
 
 .description {
   max-width: 620px;
   margin: 24px auto 0;
-  color: var(--vp-c-text-2);
+  color: #3a3a3a;
   font-size: 19px;
   line-height: 1.65;
   font-weight: 450;
@@ -201,9 +200,9 @@ h1 {
 }
 
 .secondary {
-  color: var(--vp-c-text-1);
-  background-color: transparent;
-  border: 1px solid var(--vp-c-divider);
+  color: #3a3a3a;
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
 }
 
 .secondary:hover {
@@ -216,7 +215,7 @@ h1 {
 
 .skills p {
   margin: 0 0 18px;
-  color: var(--vp-c-text-3);
+  color: #ffffff;
   font-size: 13px;
   font-weight: 450;
 }
