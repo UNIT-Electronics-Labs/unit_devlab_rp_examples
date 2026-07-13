@@ -17,7 +17,7 @@ Leer el sensor TMP235 mediante el ADC y mostrar en una pantalla OLED SSD1306 (12
 
 ## Conexiones
 
-**TMP235** (ver también [Lectura analógica del TMP235 mediante ADC](./adcTMP235.md)):
+**TMP235** (ver también [Lectura analógica del TMP235 mediante ADC](./01_OledTempInt.md)):
 
 | Pin del TMP235 | Señal | Conexión en la Pico |
 |---|---|---|
