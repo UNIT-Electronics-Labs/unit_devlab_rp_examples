@@ -163,7 +163,7 @@ La configuración del ADC y del bus I2C es idéntica a la de sus respectivas pr�
 Al energizar la placa, el display debe mostrar primero la pantalla de bienvenida ("Sistema Listo", "TMP235", "Leyendo ADC..."), y después actualizarse cada 500 ms mostrando la temperatura leída, con una línea divisoria debajo del encabezado.
 
 <div align="center">
-  <img src="../resources/app01_oled_temp.png" width="300px" alt="Display OLED mostrando la temperatura leida del sensor interno">
+  <img src="/docs/examples/resources/02_stdio.png" width="300px" alt="Display OLED mostrando la temperatura leida del sensor interno">
   <p><em>Estado esperado del display OLED durante la práctica</em></p>
 </div>
 
