@@ -1,0 +1,7 @@
+[pico]
+board = "pico"
+
+[build]
+name = "13_oled_oscillocope"
+build_dir = "build"
+sources = ["main.c", "../12_oled_application/ssd1306.c"]
