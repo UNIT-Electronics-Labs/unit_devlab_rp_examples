@@ -25,7 +25,7 @@ Las prácticas del Módulo II se desarrollan sobre una placa RP2040 con conector
 ### Pinout completo
 
 <div align="center">
-  <img src="./resources/rp2040.jpg" width="450px" alt="Development Board">
+  <img src="./resources/rp2040pin.png" width="450px" alt="Development Board">
   <p><em>Development Board</em></p>
 </div>
 
