@@ -32,7 +32,7 @@ Este repositorio agrupa ejemplos y prácticas de programación de microcontrolad
 
 ## Prácticas de Laboratorio
 
-### 1. [Lectura de Entradas Digitales (GPIO)](./gpio.md)
+### 1. [Lectura de Entradas Digitales (GPIO)](./01_OledTempInt.md)
 
 Práctica introductoria para configurar y leer entradas digitales GPIO del RP2040. Incluye:
 - Configuración de pines como entrada y salida
@@ -40,9 +40,9 @@ Práctica introductoria para configurar y leer entradas digitales GPIO del RP204
 - Debouncing de botones por software
 - Uso de interrupciones GPIO
 
-[📖 Ver práctica completa →](./gpio.md)
+[📖 Ver práctica completa →](./)
 
-### 2. [Comunicación UART](./uart.md)
+### 2. [Comunicación UART](./01_OledTempInt.md)
 
 Implementación de comunicación serial asíncrona (UART):
 - Configuración de baudrate y formato
@@ -50,9 +50,9 @@ Implementación de comunicación serial asíncrona (UART):
 - Shell interactivo por terminal
 - Manejo de interrupciones UART
 
-[📖 Ver práctica completa →](./uart.md)
+[📖 Ver práctica completa →](./adcoled.md)
 
-### 3. [Lectura de Temperatura mediante ADC](./adc.md)
+### 3. [Lectura de Temperatura mediante ADC](./01_OledTempInt.md)
 
 Uso del conversor analógico-digital para medición de temperatura:
 - Configuración del ADC de 12 bits
@@ -60,9 +60,9 @@ Uso del conversor analógico-digital para medición de temperatura:
 - Conversión de valores ADC a unidades físicas
 - Muestreo, promediado y uso de DMA
 
-[📖 Ver práctica completa →](./adc.md)
+[📖 Ver práctica completa →](./adcoled.md)
 
-### 4. [Comunicación I²C con Display OLED](./i2c_oled.md)
+### 4. [Comunicación I²C con Display OLED](./01_OledTempInt.md)
 
 Interfaz I²C para control de display OLED:
 - Configuración de bus I²C (SDA, SCL)
@@ -70,7 +70,7 @@ Interfaz I²C para control de display OLED:
 - Control de display OLED SSD1306
 - Visualización de texto, gráficos y animaciones
 
-[📖 Ver práctica completa →](./i2c_oled.md)
+[📖 Ver práctica completa →](./01_OledTempInt.md)
 
 ## Flujo Recomendado
 
