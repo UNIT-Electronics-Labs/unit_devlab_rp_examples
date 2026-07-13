@@ -4,9 +4,9 @@ Una vez cubiertas la salida digital (Blink) y la comunicación por USB (Serial),
 
 ## Concepto Teórico
 
-A diferencia de la salida digital ya cubierta en Blink, la lectura de una entrada consulta el registro `GPIO_IN` del bloque SIO, un registro de 32 bits en el que cada bit refleja, en tiempo real, el nivel eléctrico presente en el pin GPIO correspondiente. La función `gpio_get()` del SDK no es más que una máscara (*bitmask*) aplicada sobre ese registro: internamente extrae el bit correspondiente al número de pin solicitado mediante un desplazamiento y una operación AND, de la misma manera en que podrían leerse varios pines a la vez consultando `gpio_get_all()` y aplicando la máscara adecuada a los bits de interés.
-
-Un pin configurado como entrada queda además expuesto a un estado indeterminado (*flotante*) cuando no existe una conexión física definida hacia una fuente de voltaje o tierra; para evitarlo, el RP2040 incorpora resistencias de pull-up y pull-down programables en cada pin, habilitables por software mediante `gpio_pull_up()` o `gpio_pull_down()`, sin necesidad de una resistencia física externa. Adicionalmente, al presionar o soltar un botón mecánico, la señal eléctrica no transiciona de manera limpia entre los dos niveles lógicos, sino que oscila brevemente antes de estabilizarse (*rebote de contacto*); el criterio de antirrebote más simple consiste en, tras detectar un cambio de estado, esperar un breve intervalo antes de aceptar la nueva lectura como válida. El muestreo periódico (*polling*) empleado en esta práctica no es la única forma de detectar estos cambios — las interrupciones externas, más eficientes, se abordan en la práctica siguiente (IRQ).
+A diferencia de la salida digital ya cubierta en Blink, la lectura de una entrada consulta, en cada instante, el nivel eléctrico presente en el pin mediante `gpio_get()`. Esta función puede entenderse como una máscara (*bitmask*) aplicada sobre el estado completo del puerto: internamente extrae el bit correspondiente al número de pin solicitado, de la misma manera en que podrían leerse varios pines a la vez consultando `gpio_get_all()` y aplicando la máscara adecuada a los bits de interés.
+ 
+Un pin configurado como entrada queda además expuesto a un estado indeterminado (*flotante*) cuando no existe una conexión física definida hacia una fuente de voltaje o tierra; para evitarlo, el RP2040 incorpora resistencias de pull-up y pull-down programables en cada pin, habilitables por software mediante `gpio_pull_up()` o `gpio_pull_down()`, sin necesidad de una resistencia física externa. Cada entrada también puede configurarse con histéresis (disparador Schmitt) —habilitada por defecto—, la cual añade un margen entre los umbrales de detección de nivel alto y bajo; esto resulta útil frente a señales ruidosas o de transición lenta, ya que reduce la probabilidad de que el ruido eléctrico por sí solo provoque transiciones espurias. Esto es distinto del rebote de contacto: al presionar o soltar un botón mecánico, la señal no transiciona de manera limpia entre los dos niveles lógicos, sino que oscila brevemente antes de estabilizarse, un fenómeno mecánico que la histéresis por sí sola no resuelve. El criterio de antirrebote más simple consiste en, tras detectar un cambio de estado, esperar un breve intervalo antes de aceptar la nueva lectura como válida. El muestreo periódico (*polling*) empleado en esta práctica no es la única forma de detectar estos cambios — las interrupciones externas, más eficientes, se abordan en la práctica siguiente (IRQ).
 
 ## Hardware y Conexiones
 
@@ -27,10 +27,10 @@ target_link_libraries(${PROJECT_NAME}
 
 ```c
 /**
- * @file Practice_GPIO_03.c
+ * @file main.c
  * @brief Lectura de una entrada digital (boton) con pull-up y antirrebote simple
  *
- * @author obviousfancylab
+ * @author obviousfancy
  * @board  pico
  * @sdk    Raspberry Pi Pico SDK 2.2.0
  */
@@ -50,6 +50,10 @@ int main() {
     gpio_init(BUTTON_PIN);
     gpio_set_dir(BUTTON_PIN, GPIO_IN);
     gpio_pull_up(BUTTON_PIN);
+    // La entrada admite histeresis (disparador Schmitt) para filtrar ruido
+    // electrico alrededor del umbral de conmutacion; ya viene habilitada
+    // por defecto, por lo que no es necesario activarla explicitamente:
+    // gpio_set_input_hysteresis_enabled(BUTTON_PIN, true);
 
     bool estado_anterior = gpio_get(BUTTON_PIN);
 
@@ -72,11 +76,11 @@ int main() {
 
 ## Análisis del Código
 
-`gpio_pull_up()` habilita la resistencia de pull-up interna sobre `BUTTON_PIN`, evitando que el pin quede en estado flotante mientras el botón no está presionado. `gpio_get()` retorna el nivel lógico instantáneo del pin, aplicando internamente la máscara descrita en el Concepto Teórico sobre el registro `GPIO_IN`. La comparación entre `estado_actual` y `estado_anterior` es lo que permite reportar únicamente los cambios de estado, en lugar de imprimir en cada iteración del ciclo; `stdio_init_all()` y `printf()` ya se cubrieron en la práctica de Serial y aquí simplemente se reutilizan para reportar el resultado.
+`gpio_pull_up()` habilita la resistencia de pull-up interna sobre `BUTTON_PIN`, evitando que el pin quede en estado flotante mientras el botón no está presionado. La línea comentada muestra cómo se activaría explícitamente `gpio_set_input_hysteresis_enabled()`, aunque no es necesario hacerlo: la histéresis ya está habilitada por defecto, y su función —filtrar variaciones eléctricas pequeñas alrededor del umbral de conmutación— es, como ya se señaló, independiente del rebote mecánico del contacto, que se atiende mediante el margen de 20 ms del ciclo principal. `gpio_get()` retorna el nivel lógico instantáneo del pin, aplicando internamente la máscara descrita en el Concepto Teórico. La comparación entre `estado_actual` y `estado_anterior` es lo que permite reportar únicamente los cambios de estado, en lugar de imprimir en cada iteración del ciclo; `stdio_init_all()` y `printf()` ya se cubrieron en la práctica de Serial y aquí simplemente se reutilizan para reportar el resultado.
 
 ## Verificación
 
-Ábrase una terminal serial sobre el puerto USB-CDC que expone la placa (por ejemplo, `/dev/ttyACM0` en Linux) a 115200 baudios:
+Ábrase una terminal serial de su preferencia sobre el puerto USB-CDC que expone la placa (por ejemplo, `/dev/ttyACM0` en Linux) a 115200 baudios, en linux puede usarse:
 
 ```bash
 minicom -b 115200 -D /dev/ttyACM0

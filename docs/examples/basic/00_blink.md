@@ -4,14 +4,14 @@ Esta práctica introduce el control del periférico GPIO (*General Purpose Input
 
 ## Concepto Teórico
 
-A nivel de silicio, cada pin GPIO del RP2040 se conecta, a través de un bloque de control de pad, a un multiplexor de funciones (*IO Bank0*) que permite asignarle una de varias funciones posibles (UART, I2C, SPI, PWM, o entrada/salida de propósito general). Cuando un pin se configura para entrada/salida de propósito general, su estado queda gobernado por el bloque SIO (*Single-cycle IO*), un periférico de acceso directo pensado para operaciones GPIO de baja latencia: el registro `GPIO_OE` determina si el pin actúa como entrada o como salida, y el registro `GPIO_OUT` determina, bit a bit, el nivel lógico de cada salida.
-
-Una particularidad del RP2040, relevante para el resto del curso, es que estos registros exponen alias de acceso atómico (`_SET`, `_CLR`, `_XOR`) que permiten modificar un único bit sin necesidad de leer, modificar y volver a escribir el registro completo, evitando con ello condiciones de carrera cuando distintas partes de un programa manipulan pines diferentes. Las funciones `gpio_set_dir` y `gpio_put` del SDK son, en última instancia, envolturas sobre estos alias atómicos.
+A nivel de silicio, cada pin GPIO del RP2040 se conecta, a través de un bloque de control de pad, a un multiplexor de funciones que permite asignarle una de varias funciones posibles (UART, I2C, SPI, PWM, o entrada/salida de propósito general). Cuando un pin se configura para entrada/salida de propósito general, su estado queda gobernado por un bloque de acceso directo de baja latencia; el SDK garantiza que fijar o limpiar el pin sea una operación atómica, sin necesidad de leer, modificar y volver a escribir el estado completo del puerto, evitando así condiciones de carrera cuando distintas partes de un programa manipulan pines diferentes.
+ 
+Más allá de encender o apagar el pin, el bloque de control de pad de cada GPIO permite además ajustar sus características eléctricas de salida: la corriente máxima que puede entregar (*drive strength*) y la velocidad con la que transiciona entre niveles lógicos (*slew rate*). Una corriente de manejo mayor permite alimentar cargas más demandantes, mientras que una transición más lenta reduce el ruido electromagnético generado, a costa de una conmutación menos abrupta. Ninguno de los dos resulta indispensable para un LED simple, por lo que en esta práctica se dejan documentados pero no activados.
 
 ## Hardware y Conexiones
 
 No se requieren componentes adicionales: se utiliza el LED integrado en la placa, montada sobre el UNIT DevLab MultiHub Shield que sirve como base física a lo largo de las prácticas del curso.
-
+ 
 | Elemento | Pin del RP2040 | Descripción |
 |---|---|---|
 | LED integrado | GPIO25 | LED montado en la placa; no requiere conexión externa |
@@ -31,7 +31,7 @@ target_link_libraries(${PROJECT_NAME}
 
 ```c
 /**
- * @file Practice_Blink_01.c
+ * @file main.c
  * @brief Parpadeo del LED integrado del RP2040
  *
  * @author obviousfancy
@@ -48,8 +48,16 @@ target_link_libraries(${PROJECT_NAME}
 
 /* ─── Main ─────────────────────────────────────────────── */
 int main() {
+
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
+    // El pin admite ajustar su corriente maxima de salida (drive strength,
+    // de 2 a 12 mA) y la velocidad de transicion entre niveles logicos
+    // (slew rate). No son necesarias para un LED simple; ejemplo de uso
+    // si se necesitaran para una carga mas demandante o para reducir
+    // ruido electromagnetico:
+    // gpio_set_drive_strength(LED_PIN, GPIO_DRIVE_STRENGTH_4MA);
+    // gpio_set_slew_rate(LED_PIN, GPIO_SLEW_RATE_SLOW);
 
     while (1) {
         gpio_put(LED_PIN, 1);   // Enciende el LED
@@ -62,7 +70,7 @@ int main() {
 
 ## Análisis del Código
 
-`gpio_init` restablece el pin a un estado conocido y lo configura para la función SIO (entrada/salida de propósito general), en lugar de cualquier otra función alternativa disponible en ese pin. `gpio_set_dir` escribe el bit correspondiente del registro `GPIO_OE`, configurando el pin como salida. `gpio_put` escribe, mediante los alias atómicos descritos en la sección anterior, el bit correspondiente del registro `GPIO_OUT`, fijando el nivel lógico del LED. `sleep_ms` introduce un retardo bloqueante basado en el temporizador de hardware del RP2040, empleado aquí únicamente para que el parpadeo resulte perceptible al ojo humano.
+`gpio_init` restablece el pin a un estado conocido y lo configura para la función de entrada/salida de propósito general, en lugar de cualquier otra función alternativa disponible en ese pin. `gpio_set_dir` configura el pin como salida. Las líneas comentadas muestran cómo se ajustarían `gpio_set_drive_strength` (corriente máxima que el pin puede entregar, hasta 12 mA) y `gpio_set_slew_rate` (velocidad de transición eléctrica) si la carga conectada lo requiriera; para el LED de esta práctica, los valores por defecto del pin son suficientes. `gpio_put` fija el nivel lógico del LED en cada iteración. `sleep_ms` introduce un retardo bloqueante basado en el temporizador de hardware del RP2040, empleado aquí únicamente para que el parpadeo resulte perceptible al ojo humano.
 
 ## Verificación
 

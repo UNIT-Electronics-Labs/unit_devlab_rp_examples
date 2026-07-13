@@ -5,7 +5,7 @@ Esta práctica introduce el periférico UART de hardware del RP2040 —distinto 
 ## Concepto Teórico
 
 A diferencia de I2C o SPI, la UART es un protocolo asíncrono: no existe una línea de reloj compartida entre transmisor y receptor, por lo que ambos deben acordar de antemano la velocidad de transmisión (*baudrate*, en bits por segundo) para interpretar correctamente la señal. Para delimitar dónde inicia y termina cada byte sobre una línea que, en reposo, permanece en nivel alto, cada trama agrega un bit de inicio (*start*, siempre en nivel bajo) antes de los bits de datos, y uno o más bits de parada (*stop*, en nivel alto) al final. El formato empleado en esta práctica —8 bits de datos, sin paridad, 1 bit de parada— se abrevia como "8N1", y es el más común en la práctica.
-
+ 
 El siguiente diagrama resume la configuración empleada en el código y muestra, a nivel de bits, cómo se ve una trama completa sobre la línea:
 
 <div align="center">
@@ -13,18 +13,18 @@ El siguiente diagrama resume la configuración empleada en el código y muestra,
 </div>
 
 **Cálculo del tiempo de trama.** Con un *baudrate* de 115200 bits por segundo, el tiempo que ocupa un solo bit sobre la línea es:
-
+ 
 ```
 tiempo_de_bit = 1 / 115200 ≈ 8.68 µs
 ```
-
+ 
 Con el formato 8N1, cada byte transmitido ocupa 10 bits en total (1 de inicio + 8 de datos + 1 de parada), de modo que:
-
+ 
 ```
 tiempo_de_trama = 10 × 8.68 µs ≈ 86.8 µs por byte
 tasa_efectiva = 115200 / 10 = 11 520 bytes/segundo
 ```
-
+ 
 Nótese que la tasa efectiva de datos (bytes útiles por segundo) es menor que el *baudrate* nominal, precisamente porque dos de cada diez bits transmitidos son de encuadre (inicio y parada) y no forman parte del dato. El RP2040 dispone de dos periféricos UART independientes (`uart0`, `uart1`), cada uno con una FIFO interna de hardware que amortigua ráfagas cortas de bytes sin requerir que el programa los atienda de manera inmediata.
 
 ## Hardware y Conexiones
@@ -50,10 +50,10 @@ target_link_libraries(${PROJECT_NAME}
 
 ```c
 /**
- * @file Practice_UART_08.c
+ * @file main.c
  * @brief Eco por UART0 hacia el conversor USB-serial CH340 del Shield
  *
- * @author obviousfancylab
+ * @author obviousfancy
  * @board  pico
  * @sdk    Raspberry Pi Pico SDK 2.2.0
  */
@@ -80,6 +80,13 @@ int main() {
     uart_set_format(UART_ID, 8, 1, UART_PARITY_NONE);  // 8N1
     uart_set_fifo_enabled(UART_ID, true);
 
+    // La UART tambien admite control de flujo por hardware (CTS/RTS),
+    // util para pausar la transmision cuando el receptor no puede
+    // procesar mas datos; no es necesario aqui porque solo se cablearon
+    // TX, RX y GND hacia el CH340. Ejemplo de uso:
+    // uart_set_hw_flow(UART_ID, true, true);
+ 
+
     printf("Baudrate solicitado: %d, baudrate real: %u\n", BAUDRATE, baud_real);
     printf("Esperando caracteres desde el CH340...\n");
 
@@ -95,8 +102,8 @@ int main() {
 
 ## Análisis del Código
 
-`uart_init(UART_ID, BAUDRATE)` habilita el periférico y configura el generador de baudrate; retorna la velocidad real alcanzada, que puede diferir ligeramente de la solicitada, ya que internamente se deriva de un divisor entero sobre el reloj del periférico y no todo valor de *baudrate* es exactamente representable. `gpio_set_function()` sobre ambos pines es indispensable: sin ella, GP0 y GP1 permanecen en su función GPIO por defecto y no quedan conectados al periférico UART. `uart_set_format(UART_ID, 8, 1, UART_PARITY_NONE)` fija el formato 8N1 descrito en el Concepto Teórico. `uart_set_fifo_enabled(true)` habilita el almacenamiento temporal de hardware, útil si el programa no atiende cada byte de inmediato.
-
+`uart_init(UART_ID, BAUDRATE)` habilita el periférico y configura el generador de baudrate; retorna la velocidad real alcanzada, que puede diferir ligeramente de la solicitada, ya que internamente se deriva de un divisor entero sobre el reloj del periférico y no todo valor de *baudrate* es exactamente representable. `gpio_set_function()` sobre ambos pines es indispensable: sin ella, GP0 y GP1 permanecen en su función GPIO por defecto y no quedan conectados al periférico UART. `uart_set_format(UART_ID, 8, 1, UART_PARITY_NONE)` fija el formato 8N1 descrito en el Concepto Teórico. `uart_set_fifo_enabled(true)` habilita el almacenamiento temporal de hardware, útil si el programa no atiende cada byte de inmediato. La línea comentada documenta `uart_set_hw_flow()`, disponible para control de flujo por hardware; no es necesaria aquí porque el cableado hacia el CH340 solo incluye TX, RX y GND, sin las líneas CTS/RTS.
+ 
 Dentro del ciclo principal, `uart_is_readable(UART_ID)` consulta, sin bloquear, si hay al menos un byte disponible en la FIFO de recepción. Cuando lo hay, `uart_getc()` lo retira y `uart_putc()` lo retransmite de inmediato hacia el CH340 —de modo que cada carácter escrito en la terminal conectada a él se ve reflejado de vuelta—, mientras que el `printf` deja, además, un registro de cada carácter recibido sobre el puerto USB. A diferencia de una prueba de *loopback* consigo misma, aquí el ritmo de la comunicación lo marca por completo quien escribe en la terminal del CH340: el programa no transmite nada por iniciativa propia.
 
 ## Verificación
@@ -104,17 +111,15 @@ Dentro del ciclo principal, `uart_is_readable(UART_ID)` consulta, sin bloquear, 
 Esta práctica requiere dos terminales seriales abiertas de manera simultánea:
 
 1. Sobre el puerto USB-CDC propio de la placa (por ejemplo, `/dev/ttyACM0` en Linux), a 115200 baudios, para observar el registro por `printf`:
-
-   ```bash
+```bash
    minicom -b 115200 -D /dev/ttyACM0
-   ```
-
+```
+ 
 2. Sobre el puerto que expone el CH340 del Shield (por ejemplo, `/dev/ttyUSB0` en Linux — un dispositivo distinto al anterior), también a 115200 baudios, para escribir caracteres y observar su eco:
-
-   ```bash
+```bash
    minicom -b 115200 -D /dev/ttyUSB0
-   ```
-
+```
+ 
 Al escribir cualquier carácter en la segunda terminal, debe verse reflejado de inmediato en esa misma terminal (el eco enviado por la placa), y debe aparecer también una línea `Recibido por UART0: 'X'` en la primera terminal, confirmando que el dato efectivamente llegó por RX y fue procesado por el programa.
 
 <div align="center">

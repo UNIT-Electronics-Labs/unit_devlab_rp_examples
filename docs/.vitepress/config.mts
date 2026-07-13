@@ -31,7 +31,7 @@ export default defineConfig({
           { text: 'Índice', link: '/examples/' },
           {
             text: 'Perifericos Basicos',
-            collapsed: false,
+            collapsed: true,
             items: [
               {
 
@@ -78,11 +78,7 @@ export default defineConfig({
               { text: 'OLED', link: '/examples/basic/oled' }
             ]
           },
-          { text: 'Aplicaciones de GPIO', link: '/examples/basic/blink' },
-          { text: 'OLED', link: '/examples/basic/oled' },
-          { text: 'I2C con OLED', link: '/examples/i2c_oled' },
-          { text: 'TMP235 ADC', link: '/examples/adcTMP235' },
-          { text: 'TMP235 ADC con OLED', link: '/examples/oled_tmp235' }
+          { text: 'Lectura de temperatura con OLED', link: '/examples/01_OledTempInt' },
         ]
       },
       { 

@@ -5,9 +5,9 @@ Esta práctica introduce el temporizador de hardware del RP2040 para ejecutar un
 ## Concepto Teórico
 
 El RP2040 cuenta con un único periférico de temporización, cuyo elemento central es un contador de 64 bits que se incrementa una vez por microsegundo, de manera continua desde el arranque de la placa; este contador es, de hecho, la misma fuente que utilizan `time_us_64()` y, en última instancia, `sleep_ms()`. Sobre este contador continuo operan varias alarmas de hardware, cada una capaz de comparar el valor del contador contra un objetivo programado y generar una interrupción al alcanzarlo. Por sí sola, una alarma de hardware es un mecanismo de disparo único (*one-shot*): para lograr un comportamiento periódico, es la propia capa de software del SDK la que, cada vez que una alarma se dispara, reprograma automáticamente la siguiente, dando la apariencia de una repetición continua.
-
+ 
 Esto es exactamente lo que hace `add_repeating_timer_ms()`, empleada en esta práctica: registra una función de retrollamada (*callback*) que el SDK invoca a cada intervalo, y reprograma la siguiente invocación de manera automática mientras dicha retrollamada retorne `true`. El signo del intervalo tiene un significado propio: un valor negativo programa la siguiente invocación a un intervalo fijo contado desde el **inicio** de la invocación anterior (periodo verdaderamente constante, independientemente de cuánto tarde el callback en ejecutarse); un valor positivo, en cambio, programa la siguiente invocación contada desde el **final** de la invocación anterior, de modo que un callback más lento alarga el periodo real. Esta práctica utiliza un valor negativo, para obtener un parpadeo de periodo constante.
-
+ 
 El siguiente diagrama resume la secuencia de configuración empleada en el código, y ejemplifica la relación entre el contador continuo del temporizador, los disparos periódicos de la alarma, y el estado resultante del LED:
 
 <div align="center">
@@ -15,14 +15,14 @@ El siguiente diagrama resume la secuencia de configuración empleada en el códi
 </div>
 
 **Cálculo del intervalo interno.** El SDK expresa `add_repeating_timer_ms()` en milisegundos por conveniencia, pero internamente todo se maneja en microsegundos, la unidad nativa del contador. Para el intervalo empleado en esta práctica:
-
+ 
 ```
 500 ms = 500 × 1000 = 500 000 µs
 objetivo_siguiente = time_us_64() + 500 000
 ```
-
+ 
 es decir, cada vez que el callback se ejecuta, el SDK programa la siguiente alarma exactamente 500 000 microsegundos después del instante de referencia correspondiente.
-
+ 
 **¿Por qué un contador de 64 bits?** A 1 MHz, un contador de 32 bits se desbordaría (volvería a cero) después de `2^32 / 1 000 000 ≈ 4295` segundos, es decir, poco más de **71.6 minutos** de funcionamiento continuo —un problema real para un sistema que deba operar por periodos largos sin reiniciar su noción del tiempo—. Un contador de 64 bits, en cambio, se desborda después de `2^64 / 1 000 000` segundos, equivalentes a aproximadamente **584 942 años**, un margen que en la práctica elimina esta preocupación por completo.
 
 ## Hardware y Conexiones
@@ -45,10 +45,10 @@ target_link_libraries(${PROJECT_NAME}
 
 ```c
 /**
- * @file Practice_Timer_07.c
+ * @file main.c
  * @brief Parpadeo del LED integrado mediante un temporizador repetitivo de hardware
  *
- * @author obviousfancylab
+ * @author obviousfancy
  * @board  pico
  * @sdk    Raspberry Pi Pico SDK 2.2.0
  */
@@ -97,7 +97,7 @@ int main() {
 El LED integrado debe encender y apagar cada 500 ms, de manera indistinguible en apariencia del resultado de Blink. La diferencia no es visual sino de diseño: el parpadeo ya no depende de que el ciclo principal permanezca disponible para ejecutar `sleep_ms()`, sino que ocurre de forma independiente mediante una interrupción de hardware.
 
 <div align="center">
-  <img src="../resources/adcpractice4.png" width="300px" alt="LED integrado parpadeando durante la practica de Timer">
+  <img src="../resources/06_timer.gif" width="300px" alt="LED integrado parpadeando durante la practica de Timer">
   <p><em>Estado esperado del LED integrado durante la práctica</em></p>
 </div>
 
@@ -108,9 +108,9 @@ El LED integrado debe encender y apagar cada 500 ms, de manera indistinguible en
 | El LED nunca parpadea | `repetir_callback()` no retorna `true`, o la variable `timer` se declaró con un tiempo de vida incorrecto (por ejemplo, dentro de un bloque que termina antes de que el temporizador dispare) |
 | El parpadeo se percibe con un periodo distinto al programado | Se utilizó un valor positivo de `INTERVALO_MS` junto con un callback cuya duración no es despreciable frente al intervalo |
 | Error de compilación relacionado con `repeating_timer` | Falta el include de `pico/stdlib.h`, que arrastra la definición de `pico_time` |
-
+ 
 **Variantes:**
-
+ 
 - Agregar, dentro del ciclo principal, una tarea que tome varios milisegundos (por ejemplo, un conteo largo) y confirmar que el LED sigue parpadeando puntualmente pese a ello.
 - Cambiar `-INTERVALO_MS` por `INTERVALO_MS` (positivo) y, dentro del callback, insertar una demora artificial para observar cómo se distorsiona el periodo real.
 - Cancelar el temporizador mediante `cancel_repeating_timer()` al presionar el botón de la práctica de GPIO, combinando ambas prácticas.

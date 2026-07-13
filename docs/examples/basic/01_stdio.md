@@ -4,7 +4,7 @@ Esta práctica introduce la comunicación serial del RP2040 a través del puerto
 
 ## Concepto Teórico
 
-El RP2040 no dispone de un controlador de puerto serial "virtual" dedicado: lo que en esta práctica se percibe como un puerto serial sobre USB es, en realidad, una implementación de la clase USB CDC-ACM (*Communications Device Class*) que corre sobre el controlador USB nativo del RP2040, y que el sistema operativo del equipo host reconoce como un puerto serial virtual (por ejemplo, `/dev/ttyACM0` en Linux). Esto la distingue de una UART de hardware real —periférico dedicado con líneas físicas TX/RX, que se aborda más adelante en el curso— aunque, desde el punto de vista del programador, ambas interfaces se manejan mediante la misma capa estándar de E/S (`stdio`).
+El RP2040 no dispone de un controlador de puerto serial "virtual" dedicado: lo que en esta práctica se percibe como un puerto serial sobre USB es, en realidad, una implementación de la clase USB CDC-ACM (*Communications Device Class*) que corre sobre el controlador USB nativo del RP2040, y que el sistema operativo del equipo host reconoce como un puerto serial virtual (por ejemplo, `/dev/ttyACMx` en Linux). Esto la distingue de una UART de hardware real —periférico dedicado con líneas físicas TX/RX, que se aborda más adelante en el curso— aunque, desde el punto de vista del programador, ambas interfaces se manejan mediante la misma capa estándar de E/S (`stdio`).
 
 La selección de qué interfaz alimenta esa capa de `stdio` no ocurre en el código en C, sino en tiempo de configuración de CMake, mediante `pico_enable_stdio_usb()` y `pico_enable_stdio_uart()`. En tiempo de ejecución, `stdio_init_all()` simplemente inicializa todas las interfaces que hayan sido habilitadas de esta manera. Por ello, `printf` no necesita indicar hacia qué canal escribe: su destino quedó determinado desde la compilación del proyecto.
 
@@ -28,7 +28,7 @@ target_link_libraries(${PROJECT_NAME}
 
 ```c
 /**
- * @file Practice_Serial_02.c
+ * @file main.c
  * @brief Comunicacion serial basica sobre USB (stdio)
  *
  * @author obviousfancy
@@ -60,7 +60,7 @@ int main() {
 
 ## Verificación
 
-Ábrase una terminal serial sobre el puerto USB-CDC que expone la placa (por ejemplo, `/dev/ttyACM0` en Linux) a 115200 baudios:
+Ábrase una terminal serial de su preferencia sobre el puerto USB-CDC que expone la placa (por ejemplo, `/dev/ttyACM0` en Linux) a 115200 baudios, en linux puede usarse:
 
 ```bash
 minicom -b 115200 -D /dev/ttyACM0
@@ -69,7 +69,7 @@ minicom -b 115200 -D /dev/ttyACM0
 Debe observarse una línea `Contador: N` impresa cada segundo, con `N` incrementándose de manera consecutiva y sin saltos ni repeticiones.
 
 <div align="center">
-  <img src="../resources/adcpractice3.png" width="300px" alt="Mensajes Contador incrementandose en terminal serial">
+  <img src="../resources/02_stdio.png" width="300px" alt="Mensajes Contador incrementandose en terminal serial">
   <p><em>Salida esperada en la terminal serial</em></p>
 </div>
 

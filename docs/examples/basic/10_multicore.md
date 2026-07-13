@@ -5,9 +5,9 @@ Esta práctica introduce el segundo núcleo del RP2040, empleado para ejecutar u
 ## Concepto Teórico
 
 Al energizarse, únicamente el Core0 comienza a ejecutar código; el Core1 permanece detenido hasta que el propio Core0 lo pone en marcha explícitamente mediante `multicore_launch_core1()`, indicándole la función que debe ejecutar. Ambos núcleos comparten el mismo espacio de memoria y los mismos periféricos —no existe una separación de RAM o de hardware entre ellos—, por lo que resulta indispensable contar con un mecanismo explícito para intercambiar datos entre ambos de manera ordenada, en lugar de que cada uno modifique variables compartidas sin coordinación.
-
+ 
 Para ese propósito, el bloque SIO del RP2040 incluye dos FIFOs de hardware, una por cada sentido de comunicación, cada una con capacidad para 8 palabras de 32 bits. Estas FIFOs permiten que un núcleo deposite un valor (`multicore_fifo_push_blocking()`) y el otro lo retire en el mismo orden (`multicore_fifo_pop_blocking()`), sin necesidad de mecanismos de sincronización más complejos para este patrón simple de paso de mensajes. Las variantes *blocking* de estas funciones esperan lo que sea necesario —a que haya espacio libre para escribir, o a que haya un dato disponible para leer—; existen también variantes no bloqueantes (`multicore_fifo_rvalid()`, `multicore_fifo_wready()`) que permiten consultar el estado de la FIFO sin detener la ejecución, útiles cuando el núcleo no puede darse el lujo de esperar. El propio SIO puede además generar una interrupción cuando llega un dato nuevo a la FIFO, alternativa al sondeo cuando se prefiere un diseño enteramente dirigido por eventos; esta práctica utiliza sondeo por su sencillez.
-
+ 
 El siguiente diagrama resume el flujo de ambos núcleos y el papel de la FIFO entre ellos, así como el efecto observable de los mensajes recibidos sobre el parpadeo del LED:
 
 <div align="center">
@@ -42,7 +42,7 @@ target_link_libraries(${PROJECT_NAME}
 
 ```c
 /**
- * @file Practice_Multicore_11.c
+ * @file main.c
  * @brief Parpadeo del LED desde Core1, con el intervalo recibido desde Core0 por FIFO
  *
  * @author obviousfancy
@@ -102,12 +102,12 @@ int main() {
 
 ## Análisis del Código
 
-`multicore_launch_core1(core1_main)` inicializa la pila de Core1 y lo pone en marcha ejecutando `core1_main`; a partir de ese momento, ambos núcleos ejecutan código de manera simultánea e independiente. Dentro de `core1_main`, `multicore_fifo_rvalid()` consulta, sin bloquear, si hay un valor disponible en la FIFO; solo cuando lo hay se invoca `multicore_fifo_pop_blocking()` para retirarlo —de este modo, Core1 nunca se detiene esperando un mensaje que podría no llegar de inmediato, y continúa parpadeando el LED con el último intervalo conocido—. En Core0, `multicore_fifo_push_blocking()` deposita un nuevo valor en la FIFO cada 4 segundos, alternando entre tres intervalos distintos, y `printf()` reporta cada envío sobre el puerto USB.
+`multicore_launch_core1(core1_main)` inicializa la pila de Core1 y lo pone en marcha ejecutando `core1_main`; a partir de ese momento, ambos núcleos ejecutan código de manera simultánea e independiente. Dentro de `core1_main`, `multicore_fifo_rvalid()` consulta, sin bloquear, si hay un valor disponible en la FIFO; solo cuando lo hay se invoca `multicore_fifo_pop_blocking()` para retirarlo —de este modo, Core1 nunca se detiene esperando un mensaje que podría no llegar de inmediato, y continúa parpadeando el LED con el último intervalo conocido—. En Core0, la línea comentada documenta `multicore_fifo_wready()`, la contraparte de `rvalid()` para el lado que escribe; no es necesaria aquí porque el margen calculado en el Concepto Teórico (20 veces) hace prácticamente imposible que la FIFO llegue a llenarse. `multicore_fifo_push_blocking()` deposita un nuevo valor en la FIFO cada 4 segundos, alternando entre tres intervalos distintos, y `printf()` reporta cada envío sobre el puerto USB.
 
 ## Verificación
 
 El LED integrado debe parpadear alternando su velocidad cada 4 segundos: lento (500 ms), luego rápido (100 ms), luego a un ritmo intermedio (250 ms), repitiendo este ciclo de manera continua. En la terminal serial debe observarse una línea `Core0: intervalo enviado = X ms` cada vez que ocurre un cambio.
-
+ 
 Ábrase una terminal serial sobre el puerto USB-CDC que expone la placa (por ejemplo, `/dev/ttyACM0` en Linux) a 115200 baudios:
 
 ```bash

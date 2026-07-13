@@ -96,7 +96,7 @@ static inline void blink_program_init(PIO pio, uint sm, uint offset, uint pin) {
 
 ```c
 /**
- * @file Practice_PIO_12.c
+ * @file main.c
  * @brief Parpadeo del LED integrado mediante una maquina de estados PIO
  *
  * @author obviousfancy

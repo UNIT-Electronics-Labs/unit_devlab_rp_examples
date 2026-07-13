@@ -5,9 +5,9 @@ Esta práctica introduce el periférico SPI (*Serial Peripheral Interface*) del 
 ## Concepto Teórico
 
 SPI utiliza cuatro señales: reloj (SCK), generado siempre por el maestro; datos del maestro hacia el esclavo (MOSI); datos del esclavo hacia el maestro (MISO); y una línea de selección (CS) por cada esclavo conectado, que permanece en nivel bajo únicamente durante la transacción dirigida a ese dispositivo. A diferencia de I2C, el protocolo SPI en sí mismo no define un formato de trama fijo —no existe un bit de lectura/escritura estandarizado ni una dirección de 7 bits—: cada fabricante define, en la hoja de datos de su propio dispositivo, cómo interpretar los bytes intercambiados. En el caso del BMI270, el primer bit transmitido junto con la dirección del registro indica lectura o escritura (según su propia convención, no la del protocolo SPI en general).
-
+ 
 Otra particularidad de este sensor: el primer byte que el BMI270 devuelve tras el byte de dirección es un byte de relleno (*dummy*) sin significado; el valor real del registro llega hasta el segundo byte recibido. Además, el BMI270 arranca configurado para I2C incluso si se planea usarlo por SPI —el propio fabricante indica que basta con realizar una primera lectura por SPI, descartando su resultado, para que el sensor conmute de manera permanente a la interfaz SPI durante esa sesión de energizado—.
-
+ 
 El siguiente diagrama resume la configuración empleada en el código, y muestra la trama de bytes intercambiada al leer el registro `CHIP_ID`:
 
 <div align="center">
@@ -15,21 +15,21 @@ El siguiente diagrama resume la configuración empleada en el código, y muestra
 </div>
 
 **Cálculo del tiempo de transacción.** Con un reloj SPI de 1 MHz, cada bit ocupa:
-
+ 
 ```
 periodo_de_bit = 1 / 1 000 000 = 1 µs
 ```
-
+ 
 La transacción de lectura de un registro intercambia 2 bytes (16 bits) en total, de modo que:
-
+ 
 ```
 tiempo_de_transaccion = 16 × 1 µs = 16 µs
 ```
-
+ 
 El BMI270 admite hasta 10 MHz por SPI; se emplea 1 MHz de manera deliberadamente conservadora, para reducir el riesgo de errores de comunicación sobre cableado de protoboard.
-
+ 
 ## Hardware y Conexiones
-
+ 
 | Señal (BMI270) | Pin del RP2040 | Descripción |
 |---|---|---|
 | SCK | GPIO18 (SPI0 SCK) | Reloj del bus, generado por el RP2040 como maestro |
@@ -53,7 +53,7 @@ target_link_libraries(${PROJECT_NAME}
 
 ```c
 /**
- * @file Practice_SPI_10.c
+ * @file main.c
  * @brief Verificacion de comunicacion SPI con el sensor BMI270 (lectura de CHIP_ID)
  *
  * @author obviousfancy
@@ -139,7 +139,7 @@ int main() {
 ## Análisis del Código
 
 `spi_init(SPI_PORT, 1000000)` habilita el periférico y configura el reloj; como en UART e I2C, retorna la frecuencia real alcanzada. El comentario que sigue documenta una función disponible pero no utilizada (`spi_set_slave()`): dado que el modo maestro ya es el estado por defecto tras `spi_init()` y es el que esta práctica requiere, no hay nada que configurar en ese sentido, pero se deja señalado en lugar de omitirlo en silencio. `spi_set_format()` fija los cuatro parámetros indispensables para comunicarse correctamente con el BMI270: 8 bits por palabra, modo 0 (`SPI_CPOL_0`, `SPI_CPHA_0`) y bit más significativo primero. `gpio_set_function()` sobre SCK/MOSI/MISO los conecta al periférico SPI; el pin CS se maneja como un GPIO común, ya que el SDK del RP2040 no ofrece control automático de Chip Select.
-
+ 
 `bmi270_leer_registro()` implementa, en crudo, el protocolo de lectura propio del BMI270: baja CS, intercambia 2 bytes mediante `spi_write_read_blocking()` (el byte de dirección con el bit de lectura, seguido de un byte de relleno para generar los pulsos de reloj adicionales necesarios para recibir la respuesta), sube CS, y descarta el primer byte recibido conforme a lo explicado en el Concepto Teórico. La primera llamada a esta función, antes del ciclo principal, existe únicamente para forzar la conmutación de interfaz del sensor; su resultado se ignora deliberadamente.
 
 ## Verificación
