@@ -1,0 +1,7 @@
+[pico]
+board = "pico"
+
+[build]
+name = "08_i2c_practice"
+build_dir = "build"
+sources = ["main.c"]

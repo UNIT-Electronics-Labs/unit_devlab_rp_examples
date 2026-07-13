@@ -64,7 +64,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 ```
 
-> **Nota:** el nombre de proyecto original (`12_OLED_Application`) coincide con el número ya usado por la práctica PIO de Periféricos Básicos. Se recomienda renumerar las aplicaciones con su propia secuencia (por ejemplo, `Practice_App_01_OLED`), independiente de la de Periféricos Básicos.
+> **Nota:** el nombre de proyecto original (`12_oled_application`) coincide con el número ya usado por la práctica PIO de Periféricos Básicos. Se recomienda renumerar las aplicaciones con su propia secuencia (por ejemplo, `practice_app_01_oled`), independiente de la de Periféricos Básicos.
 
 ## Código Fuente — `main.c`
 

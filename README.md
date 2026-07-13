@@ -27,7 +27,7 @@ Repositorio de ejemplos y documentación para aprender programación de microcon
 ### Requisitos
 
 - Placa con RP2040 (Raspberry Pi Pico, Pico W, etc.)
-- CMake 3.13+
+- CMake 3.20+
 - Compilador ARM GCC (arm-none-eabi-gcc)
 - Pico SDK
 - Cable USB
@@ -75,8 +75,19 @@ source ~/.zshrc
 
 ### Compilar un Ejemplo
 
+Cada directorio dentro de `examples/` se puede compilar con `picodev`:
+
 ```bash
-cd example
+pip install picodev
+picodev install
+cd examples/00_blink_practice
+picodev build
+```
+
+También se puede usar CMake directamente desde el directorio del ejemplo:
+
+```bash
+cd examples/00_blink_practice
 mkdir build && cd build
 cmake ..
 make
@@ -124,7 +135,7 @@ Visita http://localhost:5173 para ver la documentación interactiva.
 │       ├── windows.md
 │       ├── c-programming.md
 │       └── asm-programming.md
-└── example/           # Código de ejemplo
+└── examples/          # Código de ejemplo y configuración compartida
 ```
 
 ## 🛠️ Herramientas Recomendadas
