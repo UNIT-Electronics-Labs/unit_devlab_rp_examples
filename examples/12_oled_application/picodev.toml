@@ -1,0 +1,7 @@
+[pico]
+board = "pico"
+
+[build]
+name = "12_oled_application"
+build_dir = "build"
+sources = ["main.c", "ssd1306.c"]

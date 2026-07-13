@@ -1,0 +1,7 @@
+[pico]
+board = "pico"
+
+[build]
+name = "09_spi_practice"
+build_dir = "build"
+sources = ["main.c"]
