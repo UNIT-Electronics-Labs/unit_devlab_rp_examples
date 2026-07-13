@@ -1,51 +1,82 @@
-# Arquitectura de Microcontroladores: El Ecosistema ARM Cortex-M
+# Arquitectura ARM y su Comparación con la Familia PIC
 
-El estudio de los sistemas embebidos requiere comprender no solo cómo escribir código, sino cómo el procesador interactúa con la memoria y los periféricos a nivel de silicio. En este curso utilizamos el **RP2040**, un microcontrolador moderno que nos permite explorar conceptos de alto rendimiento manteniendo un entorno accesible para el laboratorio.
+Esta guía introduce la arquitectura ARM —la familia de procesadores sobre la que se construye el RP2040— y la sitúa en contexto frente a la familia PIC de Microchip, punto de partida habitual de quienes se incorporan a este curso. El objetivo no es argumentar que una arquitectura sea categóricamente superior a la otra, sino presentar las diferencias reales entre ambas para que cada docente pueda evaluar, con datos concretos, qué implicaciones tiene la transición hacia ARM en su propio contexto de enseñanza o desarrollo.
 
-Antes de manipular los registros físicos, es indispensable establecer el marco de referencia arquitectónico sobre el cual trabajaremos: la familia **ARM Cortex-M**.
+## ¿Qué es ARM?
 
-## ¿Qué es ARM y la familia Cortex-M?
+ARM (originalmente *Acorn RISC Machine*, hoy *Advanced RISC Machine*) no es, en sí misma, una marca de microcontroladores como PIC, sino una **arquitectura de conjunto de instrucciones** (ISA) y un conjunto de diseños de núcleo de procesador, licenciados por la compañía ARM Holdings a decenas de fabricantes de semiconductores distintos. ARM Holdings no fabrica chips: diseña núcleos de CPU y los licencia a empresas como STMicroelectronics, NXP, Nordic Semiconductor, Texas Instruments, Renesas, Raspberry Pi (a través de Broadcom, y más recientemente con núcleos propios) y, de manera notable, la propia Microchip. Cada fabricante integra el núcleo licenciado junto con su propio conjunto de periféricos, memoria y características analógicas, para producir el microcontrolador final.
 
-A diferencia de otros fabricantes de silicio, **ARM** no fabrica microcontroladores. ARM diseña arquitecturas de procesadores (propiedad intelectual o IP) y las licencia a fabricantes como NXP, STMicroelectronics, Texas Instruments y, en este caso, Raspberry Pi. Esto significa que **aprender a programar un núcleo ARM garantiza que el conocimiento es transferible** a miles de microcontroladores de docenas de fabricantes distintos en la industria.
+Esto contrasta directamente con la familia PIC: la arquitectura de los PIC10 a PIC18 es propiedad exclusiva de Microchip, implementada únicamente en silicio de Microchip, con un conjunto de instrucciones propietario que además varía entre familias (palabras de instrucción de 12 bits en PIC10/12, 14 bits en PIC16, 16 bits en PIC18). Un programa en ensamblador para PIC16 no es compatible con PIC18, y ninguno de los dos es compatible con el ensamblador de otro fabricante. Un programa en ensamblador ARM Cortex-M0+, en cambio, es compatible —a nivel de instrucciones base— con cualquier otro microcontrolador Cortex-M0+ del mercado, sin importar qué fabricante lo produjo.
 
-Dentro de su catálogo, ARM divide sus procesadores en perfiles. El **Perfil M (Cortex-M)** está diseñado estrictamente para **Microcontroladores**. Sus características principales son:
-* **Baja latencia:** Respuestas deterministas e inmediatas a interrupciones.
-* **Eficiencia energética:** Diseñados para operar en entornos con restricciones de energía.
-* **Conjunto de instrucciones Thumb:** Un set de instrucciones RISC optimizado de 16 y 32 bits que maximiza la densidad del código (hace más con menos memoria).
+## ¿Cómo funciona la arquitectura ARM?
 
-## El Núcleo Cortex-M0+ en el RP2040
+Los núcleos ARM siguen la filosofía de diseño RISC (*Reduced Instruction Set Computer*): un conjunto de instrucciones deliberadamente reducido y de formato regular, en el que únicamente las instrucciones de carga y almacenamiento (`LDR`/`STR`) acceden a memoria, mientras que las operaciones aritméticas y lógicas trabajan exclusivamente sobre un banco uniforme de registros. Esta separación —opuesta a la filosofía CISC de arquitecturas como x86, donde una misma instrucción puede leer memoria, operar y escribir el resultado— simplifica el diseño del segmentado de instrucciones (*pipeline*) y facilita alcanzar mayor frecuencia de reloj con menor consumo.
 
-El RP2040 cuenta con un procesador **Dual-Core ARM Cortex-M0+** operando hasta a 133 MHz. El Cortex-M0+ es el núcleo más pequeño y eficiente de toda la familia ARM, diseñado específicamente para ser el puente de transición ideal desde las arquitecturas clásicas de 8 y 16 bits hacia el mundo de los 32 bits.
+Los núcleos orientados a microcontroladores (perfil *Cortex-M*, detallado más abajo) emplean el conjunto de instrucciones Thumb / Thumb-2: una codificación mixta de instrucciones de 16 y 32 bits que reduce el tamaño del código compilado frente al conjunto ARM de 32 bits empleado por los procesadores de aplicaciones, sin sacrificar demasiado desempeño. Todos los núcleos Cortex-M, independientemente del fabricante que los integre, comparten además un controlador de interrupciones estandarizado (NVIC, *Nested Vectored Interrupt Controller*), un temporizador de sistema (SysTick) y una interfaz de depuración estándar (SWD y/o JTAG) — precisamente la interfaz que emplea el depurador CH552 de este curso.
 
-Sus atributos más relevantes para nuestras prácticas incluyen:
-1. **Arquitectura Von Neumann (con matriz de buses):** A diferencia de la arquitectura Harvard estricta, aquí las instrucciones y los datos comparten el mismo mapa de memoria. El RP2040 soluciona el cuello de botella tradicional de Von Neumann mediante un *crossbar* (matriz de conmutación) que permite accesos simultáneos a distintas áreas de la memoria RAM.
-2. **Mapa de memoria plano de 32 bits:** Todo (RAM, Flash, periféricos y registros de control) se encuentra mapeado en un único espacio de direcciones lineal de 4 Gigabytes. 
-3. **Pipeline de 2 etapas:** Un cauce de instrucciones ultracorto que garantiza que los saltos condicionales (`branch`) tengan una penalización mínima en ciclos de reloj.
+ARM organiza sus núcleos en tres perfiles de arquitectura, cada uno definido por un objetivo de uso distinto:
 
-## Transición: De 8 bits (PIC) a 32 bits (ARM)
+| Perfil | Núcleos representativos | Uso típico |
+|---|---|---|
+| **Cortex-A** (aplicaciones) | Cortex-A53, A76, X4 | Teléfonos inteligentes, tablets, sistemas que ejecutan Linux/Android |
+| **Cortex-R** (tiempo real) | Cortex-R4, R5, R52 | Frenos automotrices, controladores de almacenamiento, banda base 5G |
+| **Cortex-M** (microcontroladores) | Cortex-M0+, M4, M33... | Sensores, control de motores, dispositivos IoT — el perfil del RP2040 |
 
-Durante décadas, las arquitecturas de 8 bits (como la familia PIC16/PIC18 de Microchip) han sido el pilar fundamental tanto en la industria como en la academia. Su robustez eléctrica y su arquitectura predecible han formado a generaciones de ingenieros. 
+## Familias del perfil Cortex-M
 
-Sin embargo, a medida que los requerimientos de procesamiento de señales, criptografía y comunicaciones de red aumentan, la industria ha migrado de forma masiva hacia soluciones de 32 bits. La adopción del Cortex-M0+ en el aula no invalida los conceptos aprendidos con PIC; por el contrario, los expande. 
+El perfil Cortex-M agrupa varios núcleos, cada uno con un balance distinto entre costo, consumo y desempeño:
 
-A continuación, se contrastan algunas diferencias clave desde una perspectiva pedagógica:
+| Núcleo | Arquitectura | Unidad de punto flotante (FPU) | Perfil de uso |
+|---|---|---|---|
+| Cortex-M0 | Armv6-M | No | Menor costo/área de silicio de la familia |
+| **Cortex-M0+** | Armv6-M | No | Como M0, pero con menor consumo y E/S de un solo ciclo (el núcleo del RP2040) |
+| Cortex-M3 | Armv7-M | No | División por hardware, mayor desempeño de propósito general |
+| Cortex-M4 | Armv7E-M | Opcional (precisión simple) | Instrucciones DSP, control de motores, procesamiento de señales |
+| Cortex-M7 | Armv7E-M | Opcional (precisión simple o doble) | El más rápido de la línea "clásica"; caché e instrucción superescalar |
+| Cortex-M23 | Armv8-M (base) | No | Sucesor del M0+, con TrustZone opcional |
+| Cortex-M33 | Armv8-M (principal) | Opcional | Sucesor del M3/M4, con TrustZone opcional |
+| Cortex-M55 / M85 | Armv8.1-M | Sí | Extensión vectorial Helium, orientados a inferencia de IA en el borde |
 
-| Característica | Arquitecturas Clásicas de 8 bits (ej. PIC tradicional) | Arquitectura ARM Cortex-M0+ (32 bits) | Ventaja Didáctica |
-| :--- | :--- | :--- | :--- |
-| **Ancho de Palabra** | 8 bits. Operaciones con números mayores a 255 (ej. un ADC de 12 bits) requieren múltiples ciclos de reloj y manejo de acarreos. | 32 bits. Operaciones con números hasta 4,294,967,295 se resuelven de forma nativa en un solo ciclo de reloj. | El alumno se enfoca en la matemática del proyecto (procesamiento de señales, filtros) sin lidiar con los límites aritméticos del hardware. |
-| **Gestión de Memoria** | Memoria segmentada en bancos. Requiere instrucciones constantes de cambio de banco (ej. `BANKSEL`) para acceder a distintos registros. | Mapa de memoria plano. Cualquier registro o variable está disponible directamente mediante un puntero de 32 bits. | Se elimina el riesgo de corrupción de datos por un cambio de banco olvidado, facilitando el uso intensivo del lenguaje C. |
-| **Interrupciones** | Generalmente un solo vector de interrupción (o dos en familias avanzadas). El software debe sondear banderas para saber qué periférico interrumpió. | Hardware dedicado (**NVIC** - *Nested Vectored Interrupt Controller*). Cada periférico tiene su propio vector y prioridad gestionada por hardware. | Permite enseñar conceptos de sistemas operativos de tiempo real (RTOS), concurrencia y anidación de tareas críticas de forma nativa. |
-| **Multiplicación** | Por software o mediante módulos limitados de hardware de un ciclo. | Multiplicador por hardware de 32 bits en un solo ciclo (característica estándar en el M0+ del RP2040). | Viabilidad para implementar algoritmos rápidos de DSP (Digital Signal Processing) y lazos de control PID eficientes. |
+El RP2040 integra **dos** núcleos Cortex-M0+ —de ahí la práctica de Multicore— funcionando hasta 133 MHz. La elección de este núcleo específico no es casual: al ser el miembro más pequeño y eficiente de la familia Cortex-M, mantiene el costo y el consumo comparables a los de un microcontrolador de 8 bits, mientras conserva las ventajas de una arquitectura de 32 bits estándar y de un ecosistema de herramientas común a todo el mundo ARM.
 
-::: info El valor de la estandarización
-Migrar a ARM elimina la dependencia de compiladores propietarios. Al usar el Cortex-M0+, las prácticas se compilan utilizando **GCC (GNU Compiler Collection)**, el mismo estándar industrial utilizado para compilar software en sistemas Linux y servidores, ofreciendo una optimización de código inigualable.
-:::
+## Comparación general: PIC clásico frente a RP2040 (Cortex-M0+)
 
-## El Paradigma Multicore y los bloques PIO
+| Aspecto | Familia PIC (8/16 bits clásica) | RP2040 (ARM Cortex-M0+) |
+|---|---|---|
+| Arquitectura | Propietaria de Microchip; Harvard; distinta por familia (PIC16/18/24) | Estándar abierta (Armv6-M), licenciada a múltiples fabricantes |
+| Ancho de palabra nativo | 8 bits (PIC10/12/16/18) o 16 bits (PIC24/dsPIC) | 32 bits |
+| Núcleos | Uno | Dos, simétricos |
+| Frecuencia típica | Del orden de unos pocos MHz hasta ~64 MHz | Hasta 133 MHz |
+| Toolchain | XC8/XC16/XC32, de Microchip | GCC estándar (`arm-none-eabi`), libre y multiplataforma |
+| Depuración | ICSP propietario (PICkit) | SWD estándar, compatible con múltiples depuradores |
+| Fabricantes que lo producen | Únicamente Microchip | Decenas (STMicroelectronics, NXP, Nordic, Raspberry Pi, entre otros) |
+| Periférico distintivo | Módulos analógicos integrados (op-amps, comparadores) en varias familias | PIO: máquinas de estado programables para periféricos a medida |
+| Punto flotante | Por software en la mayoría de las familias 8/16 bits | Por software en Cortex-M0+ (sin FPU); disponible en hardware desde Cortex-M4 |
 
-Más allá de las ventajas estándar de ARM, el RP2040 introduce características avanzadas que justifican su selección como plataforma de estudio:
+## ¿Cuándo conviene cada arquitectura?
 
-1. **Dual-Core:** Dispone de dos núcleos Cortex-M0+ idénticos. Esto permite enseñar paralelismo asíncrono real; por ejemplo, el Núcleo 0 puede encargarse de la lectura crítica de un sensor analógico, mientras el Núcleo 1 gestiona la actualización de una pantalla OLED sin interrumpirse mutuamente.
-2. **Entrada/Salida Programable (PIO):** Una de las mayores limitaciones al enseñar protocolos es depender de periféricos fijos o recurrir al *bit-banging* (control manual de pines que consume todos los recursos del CPU). El RP2040 incluye coprocesadores de estado (PIO) que los estudiantes pueden programar en un ensamblador simplificado para crear hardware personalizado (como interfaces DVI, controladores de matrices LED o protocolos experimentales) liberando por completo a los núcleos ARM principales.
+Presentar esta comparación de manera honesta exige reconocer que ninguna de las dos arquitecturas es categóricamente mejor: cada una resuelve bien problemas distintos.
 
-Comprender esta arquitectura es el primer paso. En las siguientes secciones, dejaremos la teoría de lado para interactuar directamente con los registros físicos de este silicio a través del **Pico C/C++ SDK**.
+**Razones objetivas a favor de considerar RP2040/Cortex-M0+:**
+
+- El ancho de palabra de 32 bits maneja de manera nativa operaciones aritméticas (marcas de tiempo, escalado de lecturas ADC) que en un PIC de 8 bits requieren fragmentarse en varias operaciones de registro.
+- El doble núcleo permite paralelismo real de hardware (práctica de Multicore) sin depender de un sistema operativo de tiempo real.
+- El PIO permite implementar protocolos o periféricos a la medida sin ocupar tiempo de CPU —una capacidad sin equivalente directo en la familia PIC clásica.
+- El toolchain es gratuito, abierto, y las habilidades adquiridas (C con GCC, SWD, NVIC) son directamente transferibles a prácticamente cualquier otro microcontrolador Cortex-M del mercado, no solo al RP2040.
+- La comunidad y la cantidad de ejemplos disponibles —incluyendo Arduino, CircuitPython, Zephyr y FreeRTOS sobre el mismo silicio— es considerablemente mayor y no depende de un único fabricante.
+
+**Razones por las que un PIC clásico puede seguir siendo la opción correcta:**
+
+- Para diseños de muy bajo número de pines (PIC10/12 en encapsulados de 6 u 8 pines), el RP2040 resulta sobredimensionado.
+- Algunas familias PIC de bajo consumo (XLP) alcanzan corrientes de reposo del orden de nanoamperes, relevante en diseños alimentados por batería durante años.
+- Varias familias PIC integran periféricos analógicos (amplificadores operacionales, comparadores, DAC) directamente en el silicio, reduciendo el conteo de componentes externos en diseños con carga analógica intensiva.
+- La inversión existente en herramientas, código y experiencia del equipo con el ecosistema MPLAB/PIC tiene un valor real que no debe descartarse solo por antigüedad de la arquitectura.
+
+Vale la pena señalar, como dato adicional y no como argumento de un lado u otro, que la propia Microchip ha diversificado su oferta de 32 bits más allá de su arquitectura propietaria: la familia **PIC32C** ya se basa en núcleos ARM Cortex-M0+, la línea **PIC32M** emplea núcleos MIPS32, y en 2025 Microchip presentó **PIC32A**, con un conjunto de instrucciones propio pero explícitamente pensado para convivir junto a las variantes ARM y MIPS dentro del mismo catálogo. La tendencia de la industria —incluyendo al propio fabricante de PIC— ha sido diversificar hacia arquitecturas estándar para sus productos de mayor gama, reservando las familias propietarias de 8 y 16 bits para los casos de uso más simples y de menor costo.
+
+## Recursos
+
+- [Arm Cortex-M — documentación oficial](https://developer.arm.com/Processors/Cortex-M)
+- [RP2040 Datasheet](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf)
+- [PIC Microcontrollers — Microchip](https://www.microchip.com/en-us/products/microcontrollers/8-bit-mcus/pic-mcus)
+- [Comparación de familias PIC32 — Microchip](https://www.microchip.com/en-us/products/microcontrollers/32-bit-mcus)

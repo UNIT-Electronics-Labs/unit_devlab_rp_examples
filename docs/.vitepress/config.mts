@@ -23,6 +23,7 @@ export default defineConfig({
           { text: 'CMakeLists', link: '/guide/CMakeLists' },
           { text: 'Hardware Usado', link: '/guide/hardware' },
           { text: 'Arquitectura ARM', link: '/guide/arm' },
+          { text: 'Compilación y Depuración', link: '/guide/openocd_pyocd' }
         ]
       },
       {
