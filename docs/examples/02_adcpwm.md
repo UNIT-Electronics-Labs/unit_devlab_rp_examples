@@ -18,7 +18,7 @@ Un efecto colateral relevante de esta arquitectura es la **perdida de resolucion
 
 Adicionalmente, esta aplicacion introduce una **tasa de refresco desacoplada**: el par ADC-PWM se actualiza en cada iteracion del bucle (alta frecuencia, para que el LED responda con fluidez), mientras que el display OLED se actualiza a un intervalo mas espaciado, controlado por un temporizador de software basado en marcas de tiempo absolutas. Actualizar el OLED en cada iteracion del bucle no aportaria beneficio perceptible al usuario y consumiria innecesariamente ancho de banda del bus I2C.
 
-<div align="center"><img src="../resources/adc_pwm_diagram.svg" alt="Diagrama de flujo del vinculo ADC-PWM con actualizacion desacoplada del OLED"></div>
+<div align="center"><img src="./resources/adc_pwm_diagram.svg" alt="Diagrama de flujo del vinculo ADC-PWM con actualizacion desacoplada del OLED"></div>
 
 ### Calculo Cuantitativo
 
