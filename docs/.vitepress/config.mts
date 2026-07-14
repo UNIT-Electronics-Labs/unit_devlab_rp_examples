@@ -89,16 +89,19 @@ export default defineConfig({
           { text: 'Lectura de temperatura con OLED', link: '/examples/01_OledTempInt' },
           { text: 'PWM con ADC con OLED', link: '/examples/02_adcpwm' },
           { text: 'Sensor BMI270 SPI con OLED I2C', link: '/examples/03_oledbmi270' },
+          { text: 'Osciloscopio con ADC y OLED', link: '/examples/04_osciloscope' },
         ]
       },
       { 
         text: 'Arduino',
         items: [
-          { text: 'Lectura de Sensor I2C con OLED', link: '/arduino/i2c_oled' },
+          { text: 'Lectura de Sensor BMI270 I2C con OLED', link: '/arduino/i2c_oled' },
+          { text: 'Lectura de Sensor BMI270 SPI con OLED', link: '/arduino/bmi270_spioled' },
           { text: 'Lectura de Sensor ADC', link: '/arduino/tmp235' },
           { text: 'Lectura de Sensor ADC Con OLED y UART', link: '/arduino/tmp235_oled' },
           { text: 'Interrupciones', link: '/arduino/interrupts' },
-          { text: 'FlappyBird', link: '/arduino/OledFlappyBird' }
+          { text: 'FlappyBird', link: '/arduino/OledFlappyBird' },
+          { text: 'TicTacToe', link: '/arduino/tictactoeoled' }
         ]
       }
     ],
