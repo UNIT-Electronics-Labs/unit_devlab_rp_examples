@@ -10,11 +10,7 @@ Pico SDK y el toolchain ARM GCC.
 
 `picodev` no instala CMake; es un requisito previo que se instala de forma manual.
 
-```powershell
-winget install --exact --id Kitware.CMake --source winget
-```
-
-Alternativamente, descargar el instalador desde https://cmake.org/download/ y
+Puede descargar el instalador desde https://cmake.org/download/ y
 asegurarse de seleccionar la opción **"Add CMake to the system PATH"** durante
 la instalación.
 
@@ -29,7 +25,7 @@ cmake --version
 Si Python no está instalado:
 
 ```powershell
-winget install Python.Python.3.11
+winget install Python.Python.3.14
 ```
 
 ### 3. Instalar picodev
@@ -127,16 +123,15 @@ principal del curso.
 ### Opciones de terminal serial
 
 1. **PuTTY** (recomendado)
-   ```powershell
-   winget install PuTTY.PuTTY
-   ```
+    Puede descargar el instalador desde https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
+
    Abrir PuTTY, seleccionar "Serial", indicar el puerto (ej. COM3) y
    velocidad 115200, luego clic en "Open".
 
 2. **Tera Term**
-   ```powershell
-   winget install TeraTermProject.teraterm
-   ```
+
+    Puede descargar eñ instalador desde el repositorio original de TeraTerm usando el ultimo instalador lanzado
+    https://github-com.translate.goog/TeraTermProject/teraterm/releases?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc
 
 ## Solución de Problemas
 
