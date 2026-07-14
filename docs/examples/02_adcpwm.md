@@ -203,7 +203,7 @@ Al girar el potenciometro de un extremo a otro, debe observarse:
 2. El display OLED actualiza, aproximadamente cada 150 ms, tres lineas: el valor crudo del ADC (0-4095), el porcentaje equivalente (0.0-100.0%) y el voltaje estimado (0.00-3.30 V).
 3. Los tres valores mostrados en el OLED son consistentes entre si en todo momento (el porcentaje y el voltaje son transformaciones directas del valor crudo).
 
-<div align="center"><img src="../resources/adc_pwm_verification.png" alt="Verificacion del control de brillo LED mediante potenciometro con lectura en OLED"></div>
+<div align="center"><img src="../examples/resources/adcpractice3.png" alt="Verificacion del control de brillo LED mediante potenciometro con lectura en OLED"></div>
 
 ## Errores Comunes
 
