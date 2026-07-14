@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="520" fill="#ffffff"/>
+
+  <!-- Titulo -->
+  <text x="450" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#1a1a1a">Blink por registros crudos - flujo de configuracion (sin SDK)</text>
+
+  <!-- Paso 1: RESETS -->
+  <rect x="40" y="60" width="230" height="100" rx="6" fill="#dbe9ff" stroke="#3b6fb5" stroke-width="1.5"/>
+  <text x="155" y="82" text-anchor="middle" font-size="13" font-weight="bold">1. RESETS_BASE</text>
+  <text x="155" y="102" text-anchor="middle" font-size="11">0x4000f000 (alias CLR)</text>
+  <text x="155" y="120" text-anchor="middle" font-size="11">Liberar IO_BANK0 (bit5)</text>
+  <text x="155" y="136" text-anchor="middle" font-size="11">y PADS_BANK0 (bit8)</text>
+  <text x="155" y="152" text-anchor="middle" font-size="10" fill="#555">Poll en RESET_DONE (0x...008)</text>
+
+  <!-- Paso 2: IO_BANK0 -->
+  <rect x="335" y="60" width="230" height="100" rx="6" fill="#dbe9ff" stroke="#3b6fb5" stroke-width="1.5"/>
+  <text x="450" y="82" text-anchor="middle" font-size="13" font-weight="bold">2. IO_BANK0</text>
+  <text x="450" y="102" text-anchor="middle" font-size="11">GPIO25_CTRL</text>
+  <text x="450" y="120" text-anchor="middle" font-size="11">0x400140cc</text>
+  <text x="450" y="138" text-anchor="middle" font-size="11">FUNCSEL = 5 (SIO)</text>
+
+  <!-- Paso 3: SIO OE -->
+  <rect x="630" y="60" width="230" height="100" rx="6" fill="#dbe9ff" stroke="#3b6fb5" stroke-width="1.5"/>
+  <text x="745" y="82" text-anchor="middle" font-size="13" font-weight="bold">3. SIO_BASE</text>
+  <text x="745" y="102" text-anchor="middle" font-size="11">GPIO_OE_SET</text>
+  <text x="745" y="120" text-anchor="middle" font-size="11">0xd0000024</text>
+  <text x="745" y="138" text-anchor="middle" font-size="11">bit25 = 1 (salida)</text>
+
+  <!-- Flechas paso 1->2->3 -->
+  <line x1="270" y1="110" x2="330" y2="110" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="565" y1="110" x2="625" y2="110" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Bucle principal -->
+  <rect x="200" y="230" width="500" height="220" rx="8" fill="#fff6da" stroke="#c9a227" stroke-width="1.5"/>
+  <text x="450" y="256" text-anchor="middle" font-size="13" font-weight="bold">Bucle principal (loop)</text>
+
+  <rect x="240" y="280" width="180" height="70" rx="5" fill="#ffffff" stroke="#c9a227" stroke-width="1.2"/>
+  <text x="330" y="305" text-anchor="middle" font-size="11" font-weight="bold">GPIO_OUT_XOR</text>
+  <text x="330" y="322" text-anchor="middle" font-size="10">0xd000001c</text>
+  <text x="330" y="337" text-anchor="middle" font-size="10">bit25 ^= 1 (toggle)</text>
+
+  <rect x="480" y="280" width="180" height="70" rx="5" fill="#ffffff" stroke="#c9a227" stroke-width="1.2"/>
+  <text x="570" y="305" text-anchor="middle" font-size="11" font-weight="bold">Retardo</text>
+  <text x="570" y="322" text-anchor="middle" font-size="10">subs r2,r2,#1</text>
+  <text x="570" y="337" text-anchor="middle" font-size="10">bne delay</text>
+
+  <line x1="420" y1="315" x2="475" y2="315" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- flecha de retorno del bucle -->
+  <path d="M 570 350 L 570 400 L 330 400 L 330 350" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="450" y="418" text-anchor="middle" font-size="10" fill="#555">b loop (repetir indefinidamente)</text>
+
+  <!-- flecha entrada al bucle -->
+  <line x1="745" y1="160" x2="745" y2="200" stroke="#333" stroke-width="2"/>
+  <line x1="745" y1="200" x2="450" y2="200" stroke="#333" stroke-width="2"/>
+  <line x1="450" y1="200" x2="450" y2="228" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <text x="450" y="490" text-anchor="middle" font-size="10" fill="#777">Todas las direcciones corresponden al RP2040 Datasheet, seccion 2.2 (Address Map)</text>
+</svg>

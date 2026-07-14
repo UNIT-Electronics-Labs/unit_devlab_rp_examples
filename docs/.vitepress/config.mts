@@ -23,7 +23,16 @@ export default defineConfig({
           { text: 'CMakeLists', link: '/guide/CMakeLists' },
           { text: 'Hardware Usado', link: '/guide/hardware' },
           { text: 'Arquitectura ARM', link: '/guide/arm' },
-          { text: 'Compilación y Depuración', link: '/guide/openocd_pyocd' }
+          { text: 'Compilación y Depuración', link: '/guide/openocd_pyocd' },
+          { text: 'Programación en Ensamblador',
+            collapsed: true,
+            items: [
+              { text: 'Registros', link: '/guide/asm/01_blinkraw' },
+              { text: 'Branch and Link', link: '/guide/asm/02_blinkbl' },
+              { text: 'UART', link: '/guide/asm/03_uarthello' },
+            ]
+
+          },
         ]
       },
       {
@@ -75,11 +84,12 @@ export default defineConfig({
                     { text: 'Multicore: Uso de los dos núcleos', link: '/examples/basic/10_multicore' },
                     { text: 'PIO: Programable Input/Output', link: '/examples/basic/11_pio' },
               ]
-              },
-              { text: 'OLED', link: '/examples/basic/oled' }
+              }
             ]
           },
           { text: 'Lectura de temperatura con OLED', link: '/examples/01_OledTempInt' },
+          { text: 'PWM con ADC con OLED', link: '/examples/02_adcpwm' },
+          { text: 'Sensor BMI270 SPI con OLED I2C', link: '/examples/03_oledbmi270' },
         ]
       },
       { 

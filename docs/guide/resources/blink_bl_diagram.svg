@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="480" viewBox="0 0 900 480" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="480" fill="#ffffff"/>
+  <text x="450" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#1a1a1a">Blink por BL hacia el SDK - el ensamblador delega, no configura</text>
+
+  <!-- Codigo asm (izquierda) -->
+  <rect x="40" y="70" width="260" height="330" rx="8" fill="#f2f2f2" stroke="#666" stroke-width="1.5"/>
+  <text x="170" y="95" text-anchor="middle" font-size="13" font-weight="bold">main.s (ensamblador)</text>
+  <text x="60" y="125" font-size="12" font-family="monospace">movs r0,#25</text>
+  <text x="60" y="145" font-size="12" font-family="monospace">bl   gpio_init</text>
+  <text x="60" y="175" font-size="12" font-family="monospace">movs r0,#25</text>
+  <text x="60" y="195" font-size="12" font-family="monospace">movs r1,#1</text>
+  <text x="60" y="215" font-size="12" font-family="monospace">bl   gpio_set_dir</text>
+  <text x="60" y="255" font-size="12" font-family="monospace">loop:</text>
+  <text x="60" y="275" font-size="12" font-family="monospace">  movs r1,#1</text>
+  <text x="60" y="295" font-size="12" font-family="monospace">  bl   gpio_put</text>
+  <text x="60" y="315" font-size="12" font-family="monospace">  bl   sleep_ms</text>
+  <text x="60" y="345" font-size="12" font-family="monospace">  movs r1,#0</text>
+  <text x="60" y="365" font-size="12" font-family="monospace">  bl   gpio_put</text>
+  <text x="60" y="385" font-size="12" font-family="monospace">  b    loop</text>
+
+  <!-- flechas BL -->
+  <line x1="300" y1="135" x2="380" y2="135" stroke="#3b6fb5" stroke-width="2" marker-end="url(#arrow2)"/>
+  <line x1="300" y1="195" x2="380" y2="195" stroke="#3b6fb5" stroke-width="2" marker-end="url(#arrow2)"/>
+  <line x1="300" y1="285" x2="380" y2="285" stroke="#3b6fb5" stroke-width="2" marker-end="url(#arrow2)"/>
+  <line x1="300" y1="315" x2="380" y2="315" stroke="#3b6fb5" stroke-width="2" marker-end="url(#arrow2)"/>
+  <text x="340" y="120" text-anchor="middle" font-size="9" fill="#3b6fb5">BL</text>
+
+  <!-- Caja negra SDK (derecha) -->
+  <rect x="390" y="70" width="470" height="330" rx="8" fill="#dbe9ff" stroke="#3b6fb5" stroke-width="1.5"/>
+  <text x="625" y="95" text-anchor="middle" font-size="13" font-weight="bold">Pico C/C++ SDK (hardware_gpio)</text>
+
+  <rect x="420" y="120" width="180" height="55" rx="5" fill="#ffffff" stroke="#3b6fb5"/>
+  <text x="510" y="142" text-anchor="middle" font-size="11" font-weight="bold">gpio_init()</text>
+  <text x="510" y="160" text-anchor="middle" font-size="9" fill="#555">reset pad + limpia overrides</text>
+
+  <rect x="620" y="120" width="210" height="55" rx="5" fill="#ffffff" stroke="#3b6fb5"/>
+  <text x="725" y="142" text-anchor="middle" font-size="11" font-weight="bold">gpio_set_dir()</text>
+  <text x="725" y="160" text-anchor="middle" font-size="9" fill="#555">escribe SIO GPIO_OE_SET/CLR</text>
+
+  <rect x="420" y="255" width="180" height="55" rx="5" fill="#ffffff" stroke="#3b6fb5"/>
+  <text x="510" y="277" text-anchor="middle" font-size="11" font-weight="bold">gpio_put()</text>
+  <text x="510" y="295" text-anchor="middle" font-size="9" fill="#555">escribe SIO GPIO_OUT_SET/CLR</text>
+
+  <rect x="620" y="255" width="210" height="55" rx="5" fill="#ffffff" stroke="#3b6fb5"/>
+  <text x="725" y="277" text-anchor="middle" font-size="11" font-weight="bold">sleep_ms()</text>
+  <text x="725" y="295" text-anchor="middle" font-size="9" fill="#555">usa el timer de hardware (alarm)</text>
+
+  <text x="625" y="345" text-anchor="middle" font-size="10" fill="#555">Estas funciones son las que, en la</text>
+  <text x="625" y="360" text-anchor="middle" font-size="10" fill="#555">practica anterior, se escribieron a mano</text>
+  <text x="625" y="375" text-anchor="middle" font-size="10" fill="#555">tocando SIO / IO_BANK0 / RESETS</text>
+
+  <text x="450" y="440" text-anchor="middle" font-size="10" fill="#777">El ensamblador aqui solo mueve argumentos a r0/r1 y delega la logica; no hay acceso directo a periféricos</text>
+</svg>
