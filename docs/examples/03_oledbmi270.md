@@ -420,7 +420,7 @@ Z-0.2
 
 Con la placa en reposo sobre una superficie plana, el eje Z del acelerómetro debe aproximarse a +1.00 g (gravedad) y los demás valores deben mantenerse cercanos a cero, con ruido menor a ±0.05 g y ±2 dps. Al inclinar o mover la placa, los valores deben responder en tiempo real, sin retraso perceptible.
 
-<div align="center"><img src="/resources/app02_bmi270_oled_verificacion.png" alt="Pantalla OLED mostrando lecturas de aceleracion y giro del BMI270"></div>
+<div align="center"><img src="../examples/resources/08_i2c.png" alt="Pantalla OLED mostrando lecturas de aceleracion y giro del BMI270"></div>
 
 **Cálculo de margen temporal:** una ráfaga de adquisición (1 byte de dirección + 1 byte dummy + 12 bytes de datos = 14 bytes) a 992063 Hz toma aproximadamente 113 µs. El refresco completo del OLED por I2C a 400 kHz (128×64 monocromo) toma aproximadamente 23 ms, tal como se documentó en la aplicación 01. Frente a un período de bucle de 100 ms, el margen disponible es de aproximadamente 4.3×, suficiente para sostener el refresco de pantalla sin acumular retraso.
 
