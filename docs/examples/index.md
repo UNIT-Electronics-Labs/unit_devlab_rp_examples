@@ -1,29 +1,27 @@
-# Ejemplos y Prácticas
+# Pico C/C++ SDK
+ 
+Esta seccion es el nucleo del curso: el manejo del **RP2040** (Raspberry Pi Pico) directamente con las funciones oficiales del **Pico SDK 2.2.0**, sin pasar por Arduino. Se divide en dos rutas complementarias:
+ 
+- **Periféricos Básicos** — 12 practicas secuenciales, cada una limitada a un solo periferico: inicializacion, asignacion de pines, configuracion elemental y un ciclo de validacion basico.
+- **Aplicaciones e Integración** — proyectos que combinan varios perifericos entre si (y, en algunos casos, hardware o bibliotecas de terceros) para resolver un problema completo.
 
-Este repositorio agrupa ejemplos y prácticas de programación de microcontroladores utilizando el microcontrolador **RP2040**  en su version Rapberry Pi Pico como plataforma de desarrollo. El RP2040 es un microcontrolador dual-core ARM Cortex-M0+ desarrollado por Raspberry Pi.
 
-## Contenido Temático
-
-### Arquitectura y Programación
-- Arquitecturas de microcontroladores de propósito general
-- Implementación utilizando RP2040 (arquitectura Cortex-M0+)
-- Programación en lenguaje ensamblador
-- Programación en lenguaje C
-- Programación en Arduino IDE
-
-### Periféricos y Comunicaciones
-- Basicos RP2040
-- Comunicacion USB
-- Entradas y salidas digitales (GPIO)
-- Interrupciones
-- ADC (Conversor Analógico-Digital)
-- PWM
-- Temporizadores
-- Comunicación UART
-- Comunicación I²C
-- Comunicación SPI
-- Multinucleo Cortex M0
-- PIO
+## Periféricos Básicos
+ 
+| # | Práctica | Contenido |
+|---|---|---|
+| 1 | [Blink](../examples/basic/00_blink.md) | `gpio_init`, `gpio_put`, `sleep_ms`, CMake basico |
+| 2 | [Serial](../examples/basic/01_stdio.md) | `stdio_init_all` + `printf` por USB |
+| 3 | [GPIO](../examples/basic/02_gpio.md) | Entrada de boton, pull-up interno, antirrebote por *polling* |
+| 4 | [IRQ](../examples/basic/03_irq.md) | Interrupciones externas, flancos, callbacks |
+| 5 | [ADC](../examples/basic/04_adc.md) | Conversion analogica, sensor de temperatura interno (canal 4) |
+| 6 | [PWM](../examples/basic/05_pwm.md) | Slices, ciclo de trabajo, divisores de reloj |
+| 7 | [Timer](../examples/basic/06_timer.md) | `repeating_timer`, alarmas asincronas no bloqueantes |
+| 8 | [UART](../examples/basic/07_uart.md) | Baudrate, TX/RX, eco real contra el CH340 del shield |
+| 9 | [I2C](../examples/basic/08_i2c.md) | Escaner de bus (sin OLED, diferido a Aplicaciones) |
+| 10 | [SPI](../examples/basic/09_spi.md) | Verificacion de `CHIP_ID` del BMI270 real, sin biblioteca |
+| 11 | [Multicore](../examples/basic/10_multicore.md) | Core 1, FIFOs entre nucleos |
+| 12 | [PIO](../examples/basic/11_pio.md) | Maquinas de estado, ensamblador `.pio` basico |
 
 ### Herramientas de Desarrollo
 - SDK de RP2040
@@ -32,49 +30,29 @@ Este repositorio agrupa ejemplos y prácticas de programación de microcontrolad
 
 ## Prácticas de Laboratorio
 
-### 1. [Lectura de Entradas Digitales (GPIO)](./01_OledTempInt.md)
-
-Práctica introductoria para configurar y leer entradas digitales GPIO del RP2040. Incluye:
-- Configuración de pines como entrada y salida
-- Lectura de estados digitales y control de LEDs
-- Debouncing de botones por software
-- Uso de interrupciones GPIO
-
-[📖 Ver práctica completa →](./)
-
-### 2. [Comunicación UART](./01_OledTempInt.md)
-
-Implementación de comunicación serial asíncrona (UART):
-- Configuración de baudrate y formato
-- Transmisión y recepción de datos
-- Shell interactivo por terminal
-- Manejo de interrupciones UART
-
-[📖 Ver práctica completa →](./adcoled.md)
-
-### 3. [Lectura de Temperatura mediante ADC](./01_OledTempInt.md)
-
-Uso del conversor analógico-digital para medición de temperatura:
-- Configuración del ADC de 12 bits
-- Lectura del sensor de temperatura interno del RP2040
-- Conversión de valores ADC a unidades físicas
-- Muestreo, promediado y uso de DMA
-
-[📖 Ver práctica completa →](./adcoled.md)
-
-### 4. [Comunicación I²C con Display OLED](./01_OledTempInt.md)
-
-Interfaz I²C para control de display OLED:
-- Configuración de bus I²C (SDA, SCL)
-- Protocolo de comunicación I²C
-- Control de display OLED SSD1306
-- Visualización de texto, gráficos y animaciones
-
-[📖 Ver práctica completa →](./01_OledTempInt.md)
+## Aplicaciones e Integración
+ 
+Proyectos completos que integran varios de los perifericos anteriores con hardware real del shield (sensores externos, display, IMU) o funcionalidad avanzada del RP2040 (DMA).
+ 
+### 1. [Sensor de Temperatura Interno con Despliegue en OLED](./01_OledTempInt.md)
+ 
+Lectura del sensor de temperatura interno por ADC, con despliegue del valor en un display OLED SSD1306 via I2C (biblioteca `pico-ssd1306` de David Schramm). Primera integracion ADC + I2C de la seccion.
+ 
+### 2. [Control de Brillo de un LED mediante Potenciometro (ADC + PWM + OLED)](./02_adcpwm.md)
+ 
+Un potenciometro externo, leido por el ADC, controla en tiempo real el ciclo de trabajo de una senal PWM que modula el brillo de un LED. El valor crudo, el porcentaje y el voltaje estimado se muestran de forma simultanea en el OLED, con una tasa de refresco desacoplada de la del par ADC-PWM.
+ 
+### 3. [IMU BMI270 por SPI con Despliegue en OLED](./03_oledbmi270.md)
+ 
+Inicializacion completa del BMI270 (secuencia oficial de Bosch, incluida la carga del archivo de configuracion de 8192 bytes) y lectura de acelerometro y giroscopio por SPI, con los valores en las tres unidades desplegados en el OLED y por consola serial.
+ 
+### 4. [Osciloscopio OLED de un Canal](./04_osciloscope.md)
+ 
+Captura de una senal analogica externa mediante ADC y DMA en modo de bloque, con disparo (*trigger*) por histeresis de dos niveles y autoescala vertical, dibujando el trazo resultante en el OLED — el equivalente funcional, en miniatura, de un osciloscopio de banco.
 
 ## Flujo Recomendado
 
 ```bash
-pico-flash
+picodev-flash
 ```
 

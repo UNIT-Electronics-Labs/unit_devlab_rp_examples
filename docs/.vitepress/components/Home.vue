@@ -66,7 +66,7 @@ const featureCards = [
         </a>
 
         <a :href="withBase('/examples/')" class="btn secondary">
-          Ver ejemplos
+          Pico C SDK
         </a>
       </div>
 

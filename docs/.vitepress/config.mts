@@ -10,7 +10,7 @@ export default defineConfig({
     nav: [
       { text: 'Inicio', link: '/' },
       { text: 'Guías', link: '/guide/windows' },
-      { text: 'Ejemplos', link: '/examples/' },
+      { text: 'Pico C SDK', link: '/examples/' },
     ],
     sidebar: [
       {
