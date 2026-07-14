@@ -624,7 +624,7 @@ completarse una línea o llenarse el tablero, el display muestra "You win",
 "CPU wins" o "Draft" según corresponda, y el programa espera a que ambos
 botones se suelten antes de reiniciar automáticamente una nueva partida.
 
-<div align="center"><img src="/images/arduino_tictactoe_oled.png" alt="Verificacion juego Tic-Tac-Toe con OLED"></div>
+<div align="center"><img src="../examples/resources/03irq.png" alt="Verificacion juego Tic-Tac-Toe con OLED"></div>
 
 ## 8. Errores comunes y variantes
 
