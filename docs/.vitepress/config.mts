@@ -9,15 +9,14 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: 'Inicio', link: '/' },
-      { text: 'Guías', link: '/guide/devlab' },
+      { text: 'Guías', link: '/guide/windows' },
       { text: 'Ejemplos', link: '/examples/' },
-      { text: 'Aplicaciones Arduino', link: '/arduino/' },
     ],
     sidebar: [
       {
         text: 'Primeros Pasos',
         items: [
-          { text: 'DevLab', link: '/guide/devlab' },
+          //{ text: 'DevLab', link: '/guide/devlab' },
           { text: 'Windows', link: '/guide/windows' },
           { text: 'Programación en C con Pico SDK', link: '/guide/c-programming' },
           { text: 'CMakeLists', link: '/guide/CMakeLists' },

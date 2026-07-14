@@ -1,152 +1,111 @@
 # Guía para Windows - RP2040
 
-Esta guía proporciona pasos específicos para configurar el entorno de desarrollo RP2040 en Windows.
+Esta guía proporciona pasos específicos para configurar el entorno de desarrollo
+RP2040 en Windows usando `picodev`, el CLI que automatiza la instalación del
+Pico SDK y el toolchain ARM GCC.
 
 ## Instalación Rápida
 
-### 1. Instalar Herramientas Básicas
+### 1. Instalar CMake
 
-Raspberry Pi proporciona un instalador automático para Windows:
-
-1. Descarga el [Source Code de PicoSDK](https://github.com/raspberrypi/pico-sdk/releases/latest)
-2. Descomprime el archivo zip `pico-sdk-<latestversion>` en la carpeta de tu elección
-3. Reinicia el sistema cuando termine
-
-#### Opción B: Instalación Manual
+`picodev` no instala CMake; es un requisito previo que se instala de forma manual.
 
 ```powershell
-# Instalar CMake
-winget install Kitware.CMake
+winget install --exact --id Kitware.CMake --source winget
+```
 
-# Instalar Build Tools para Visual Studio
-winget install Microsoft.VisualStudio.2022.BuildTools
+Alternativamente, descargar el instalador desde https://cmake.org/download/ y
+asegurarse de seleccionar la opción **"Add CMake to the system PATH"** durante
+la instalación.
 
-# Instalar Git
-winget install Git.Git
+Abrir una **nueva** ventana de PowerShell y verificar:
 
-# Instalar Python
+```powershell
+cmake --version
+```
+
+### 2. Instalar Python
+
+Si Python no está instalado:
+
+```powershell
 winget install Python.Python.3.11
 ```
 
-### 2. Instalar ARM GCC
-
-Descarga e instala ARM GCC desde:
-[https://developer.arm.com/downloads/-/gnu-rm](https://developer.arm.com/-/media/Files/downloads/gnu/15.2.rel1/binrel/arm-gnu-toolchain-15.2.rel1-mingw-w64-i686-arm-none-eabi.msi)
-1. Descarga el instalador Windows (.msi)
-2. Ejecuta el instalador
-3. **Importante**: Marca la opción "Add path to environment variable"
-
-### 3. Clonar el Pico SDK
+### 3. Instalar picodev
 
 ```powershell
-# Crear directorio de desarrollo
-cd $env:USERPROFILE
-mkdir pico
-cd pico
-
-# Clonar SDK
-git clone https://github.com/raspberrypi/pico-sdk.git
-cd pico-sdk
-git submodule update --init
-
-# Configurar variable de entorno (PowerShell)
-[Environment]::SetEnvironmentVariable("PICO_SDK_PATH", "$env:USERPROFILE\\pico\\pico-sdk", "User")
+pip install picodev
 ```
 
-### 4. Verificar Instalación
-
-Abre una **nueva** ventana de PowerShell:
+### 4. Instalar el Pico SDK y el toolchain ARM GCC
 
 ```powershell
-# Verificar CMake
-cmake --version
-
-# Verificar ARM GCC
-arm-none-eabi-gcc --version
-
-# Verificar SDK
-echo $env:PICO_SDK_PATH
-
-# Verificar Git
-git --version
+picodev install
 ```
 
-## Herramientas Opcionales
+Este comando descarga el Pico SDK y el toolchain ARM GCC correspondientes a
+Windows x64, además de Ninja y picotool, en `~/.picodev`. No requiere
+configurar variables de entorno manualmente.
 
-### picotool
+### 5. Verificar la instalación
 
-Para programar sin modo BOOTSEL:
+Abrir una **nueva** ventana de PowerShell:
 
 ```powershell
-cd $env:USERPROFILE\pico
-git clone https://github.com/raspberrypi/picotool.git
-cd picotool
-mkdir build
-cd build
-cmake ..
-cmake --build .
+picodev doctor
 ```
 
-Agregar a PATH:
-```powershell
-$picotoolPath = "$env:USERPROFILE\pico\picotool\build"
-[Environment]::SetEnvironmentVariable("Path", $env:Path + ";$picotoolPath", "User")
-```
+`picodev doctor` verifica que CMake, el Pico SDK y el toolchain ARM GCC estén
+disponibles y correctamente configurados.
 
-### Terminal Serial
-
-Opciones para comunicación serial:
-
-1. **PuTTY** (recomendado)
-   ```powershell
-   winget install PuTTY.PuTTY
-   ```
-
-2. **Tera Term**
-   ```powershell
-   winget install TeraTermProject.teraterm
-   ```
-
-3. **Arduino IDE Serial Monitor**
-
-## Compilar un Proyecto
-
-### Usando PowerShell
+## Crear y Compilar un Proyecto
 
 ```powershell
-cd mi_proyecto
-mkdir build
-cd build
-cmake -G "NMake Makefiles" ..
-nmake
+picodev new blink
+cd blink
+picodev build
 ```
 
-### Usando Developer Command Prompt
+La salida se genera en `build/blink.uf2`. Para limpiar los archivos de
+compilación generados:
 
-1. Buscar "Developer Command Prompt for VS 2022"
-2. Navegar al proyecto
-3. Compilar:
-
-```cmd
-cd mi_proyecto
-mkdir build
-cd build
-cmake ..
-cmake --build . --config Release
+```powershell
+picodev clean
 ```
 
-### Usando Visual Studio Code
+El CLI también puede invocarse a través del intérprete de Python:
 
-1. Instalar extensión "CMake Tools"
-2. Abrir carpeta del proyecto
-3. Presionar `Ctrl+Shift+P`
-4. Buscar "CMake: Configure"
-5. Seleccionar "ARM GCC" como kit
-6. Presionar F7 para compilar
+```powershell
+python -m picodev --help
+```
 
 ## Cargar el Programa
 
-### Método 1: Modo BOOTSEL
+### Método recomendado: SWD con picodev flash
+
+1. Conectar una sonda de depuración compatible con CMSIS-DAP a los pines SWD de la placa
+2. Conectar la sonda por USB
+3. Ejecutar:
+
+```powershell
+picodev flash
+```
+
+`picodev flash` programa el firmware ELF por SWD usando pyOCD, seleccionando
+automáticamente `rp2040` o `rp2350` según la placa. Para listar las sondas
+detectadas:
+
+```powershell
+picodev flash --detect
+```
+
+Usar `--probe <ID>` cuando hay varias sondas conectadas.
+
+### Alternativa: Modo BOOTSEL
+
+Este método no requiere sonda de depuración, pero no forma parte del flujo
+principal del curso.
 
 1. Desconecta la placa Pico
 2. Mantén presionado el botón BOOTSEL (blanco)
@@ -156,80 +115,82 @@ cmake --build . --config Release
 6. Arrastra el archivo `.uf2` desde `build/` a la unidad RPI-RP2
 7. La placa se reinicia automáticamente
 
-### Método 2: Con picotool
-
-```powershell
-picotool info
-picotool load programa.uf2 -f
-picotool reboot
-```
-
 ## Comunicación Serial
 
 ### Encontrar el puerto COM
 
-1. Conectar la Pico
+1. Conectar la placa
 2. Abrir "Administrador de dispositivos"
 3. Expandir "Puertos (COM y LPT)"
 4. Buscar "USB Serial Device (COMx)"
 
-### Usar PuTTY
+### Opciones de terminal serial
 
-1. Abrir PuTTY
-2. Seleccionar "Serial"
-3. Puerto: COMx (ej. COM3)
-4. Velocidad: 115200
-5. Clic en "Open"
+1. **PuTTY** (recomendado)
+   ```powershell
+   winget install PuTTY.PuTTY
+   ```
+   Abrir PuTTY, seleccionar "Serial", indicar el puerto (ej. COM3) y
+   velocidad 115200, luego clic en "Open".
+
+2. **Tera Term**
+   ```powershell
+   winget install TeraTermProject.teraterm
+   ```
 
 ## Solución de Problemas
 
-### CMake no encuentra el compilador
+### `picodev doctor` reporta CMake faltante
 
-Verificar que ARM GCC esté en PATH:
-
-```powershell
-$env:Path -split ';' | Select-String arm
-```
-
-Si no aparece, agregar manualmente:
+Verificar que CMake esté en PATH:
 
 ```powershell
-$armPath = "C:\Program Files (x86)\Arm GNU Toolchain arm-none-eabi\13.2 Rel1\bin"
-[Environment]::SetEnvironmentVariable("Path", $env:Path + ";$armPath", "User")
+$env:Path -split ';' | Select-String cmake
 ```
 
-### PICO_SDK_PATH no encontrado
+Si no aparece, reinstalar con `winget install --exact --id Kitware.CMake --source winget`
+asegurando la opción de agregar a PATH, o agregarlo manualmente y reiniciar PowerShell.
+
+### `picodev doctor` reporta SDK o toolchain faltante
+
+Volver a ejecutar la instalación:
 
 ```powershell
-# Verificar
-echo $env:PICO_SDK_PATH
-
-# Si está vacío, configurar
-[Environment]::SetEnvironmentVariable("PICO_SDK_PATH", "$env:USERPROFILE\\pico\\pico-sdk", "User")
-
-# Reiniciar PowerShell
+picodev install
 ```
 
-### Error: "ninja: command not found"
+Si se está usando una ubicación personalizada, verificar las variables de
+entorno `PICO_SDK_PATH` y `PICO_TOOLCHAIN_PATH`.
 
-Instalar Ninja:
+### `picodev.exe` no se reconoce como comando
+
+Esto ocurre cuando el directorio de Scripts de Python no está en el PATH de
+usuario. La forma modular sigue disponible sin modificar el PATH:
 
 ```powershell
-winget install Ninja-build.Ninja
+python -m picodev doctor
+python -m picodev install
 ```
 
-O usar NMake en su lugar:
+Para usar el comando corto `picodev`, imprimir el directorio de Scripts y
+agregarlo al PATH de usuario:
 
 ```powershell
-cmake -G "NMake Makefiles" ..
+python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
 ```
 
-### La Pico no aparece como RPI-RP2
+### `picodev flash` no detecta la sonda
+
+1. Verificar que la sonda CMSIS-DAP esté conectada por USB
+2. Ejecutar `picodev flash --detect` para listar las sondas disponibles
+3. Si hay varias sondas conectadas, especificar `--probe <ID>`
+
+### La placa no aparece como RPI-RP2 (modo BOOTSEL)
 
 1. Verificar que el cable USB funcione (algunos solo cargan)
 2. Intentar con otro puerto USB
 3. Mantener BOOTSEL presionado ANTES de conectar
-4. Verificar Device Manager para ver si aparece como "RP2 Boot"
+4. Verificar el Administrador de dispositivos para ver si aparece como "RP2 Boot"
 
 ### Puerto serial no aparece
 
@@ -248,30 +209,11 @@ Y en el código:
 
 int main() {
     stdio_init_all();  // Importante!
-    
+
     while (1) {
         printf("Hola\n");
         sleep_ms(1000);
     }
-}
-```
-
-## Configurar VS Code (Opcional)
-
-### Extensiones Recomendadas
-
-1. C/C++ (Microsoft)
-2. CMake Tools (Microsoft)
-3. Serial Monitor (Microsoft)
-
-### settings.json
-
-```json
-{
-    "cmake.configureEnvironment": {
-        "PICO_SDK_PATH": "C:/Users/TuUsuario/pico/pico-sdk"
-    },
-    "cmake.generator": "NMake Makefiles"
 }
 ```
 
@@ -280,4 +222,3 @@ int main() {
 - [Getting Started with Pico - PDF](https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf)
 - [Pico C/C++ SDK](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf)
 - [RP2040 Datasheet](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf)
-- [Pico Setup Windows (GitHub)](https://github.com/raspberrypi/pico-setup-windows)
