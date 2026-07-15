@@ -25,6 +25,10 @@ Lectura del sensor de temperatura interno mediante ADC.
 ### I2C - Display OLED
 Comunicación I²C con display OLED para visualización de datos.
 
+### Osciloscopio OLED
+El ejemplo `13_oled_oscillocope` captura GP26/ADC0 a 500 kS/s mediante DMA y
+grafica la senal en una pantalla SSD1306.
+
 ## Requisitos
 
 - Placa con RP2040 (Raspberry Pi Pico, etc.)
