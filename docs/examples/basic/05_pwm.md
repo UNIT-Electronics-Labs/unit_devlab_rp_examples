@@ -19,7 +19,11 @@ El siguiente diagrama resume la secuencia de configuración empleada en el códi
 ```
 f_PWM = clk_sys / (clkdiv × (wrap + 1))
 ```
- 
+
+si se agrega la polaridad,la formula cambia a multiplicar el divisor de reloj por dos, porque necesita recorrer 2 veces el periodo para completar una pulsación completa.
+```
+f_PWM = clk_sys / (clkdiv × (wrap + 1) x 2)
+```
 Para los valores empleados en el código de esta práctica (`clkdiv = 100`, `wrap = 255`):
  
 ```

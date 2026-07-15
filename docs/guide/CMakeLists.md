@@ -3,12 +3,12 @@
 Todo proyecto basado en el Raspberry Pi Pico SDK depende de un único `CMakeLists.txt` que decide qué se compila, para qué placa, y con qué librerías del SDK se enlaza. A diferencia de un `CMakeLists.txt` genérico de C/C++, este trae varias funciones propias del SDK (`pico_sdk_init`, `pico_add_extra_outputs`, etc.) que no existen en CMake puro.
 
 ```cmake
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.20)
 
-include(pico_sdk_import.cmake)
+include("${CMAKE_CURRENT_LIST_DIR}/../pico_sdk_import.cmake")
 
 set(PROJECT_NAME    "mi_proyecto")
-set(PROJECT_SOURCES "mi_proyecto.c")
+set(PROJECT_SOURCES "mi_proyecto.c") 
 set(PICO_BOARD      "pico")
 
 set(PROJECT_LIBS
@@ -16,7 +16,7 @@ set(PROJECT_LIBS
     hardware_adc
 )
 
-project(${PROJECT_NAME})
+project(${PROJECT_NAME}  C CXX ASM)
 
 pico_sdk_init()
 
@@ -29,11 +29,11 @@ pico_add_extra_outputs(${PROJECT_NAME})
 
 ---
 
-## `cmake_minimum_required(VERSION 3.13)`
+## `cmake_minimum_required(VERSION 3.20)`
 
 Fija la versión mínima de CMake compatible con las funciones del SDK. Las versiones más recientes del pico-sdk (2.x) validan además un rango superior — por ejemplo `VERSION 3.13...3.27` — para advertir si CMake ya cambió de comportamiento en versiones muy nuevas. Sin esta línea, un CMake demasiado viejo falla más adelante con errores confusos en vez de indicar directamente la incompatibilidad.
 
-## `include(pico_sdk_import.cmake)`
+## `include("${CMAKE_CURRENT_LIST_DIR}/../pico_sdk_import.cmake")`
 
 Localiza el SDK en el sistema, antes de que exista cualquier noción de "proyecto" para CMake. Internamente busca, en este orden de prioridad:
 
@@ -50,7 +50,7 @@ Debe ir siempre antes de `project()`. Es la única regla de orden verdaderamente
 
 Variable interna de conveniencia, no reservada por CMake ni por el SDK. Se reutiliza en el resto del archivo (`project()`, `add_executable()`, etc.) para que cambiar el nombre del proyecto se reduzca a editar una sola línea.
 
-## `set(PROJECT_SOURCES "mi_proyecto.c")`
+## `set(PROJECT_SOURCES "mi_proyecto.c")` o `set(PROJECT_SOURCES "mi_proyecto.c mi_proyecto2.c")`
 
 Lista de archivos fuente que se compilan. Para proyectos de un solo archivo basta con la cadena directa; si el proyecto crece a varios `.c`/`.cpp`, se convierte en lista:
 
@@ -92,7 +92,7 @@ Librerías del SDK que se enlazan al ejecutable. `pico_stdlib` es la base casi u
 
 Usar una función de un periférico en el código (`adc_init()`, `i2c_write_blocking()`, etc.) sin haber agregado su librería correspondiente aquí no rompe la compilación — el código compila normal — pero falla en la etapa de *linking* con errores de símbolo no encontrado.
 
-## `project(${PROJECT_NAME})`
+## `project(${PROJECT_NAME}  C CXX ASM)`
 
 Declara formalmente el proyecto ante CMake. A partir de este punto CMake ya identifica compiladores disponibles. No hace falta declarar lenguajes explícitos (`project(nombre C CXX ASM)`) — `pico_sdk_init()`, más abajo, se encarga de habilitarlos internamente.
 

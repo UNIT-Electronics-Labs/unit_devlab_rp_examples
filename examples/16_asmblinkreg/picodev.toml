@@ -4,4 +4,4 @@ board = "pico"
 [build]
 name = "16_asmblinkreg"
 build_dir = "build"
-sources = ["main.c"]
+sources = ["main.S"]

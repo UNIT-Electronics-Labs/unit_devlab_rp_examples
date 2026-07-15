@@ -37,6 +37,7 @@ int main() {
         if (uart_is_readable(UART_ID)) {
             char recibido = uart_getc(UART_ID);
             uart_putc(UART_ID, recibido);                     // Eco de vuelta hacia el CH340
+            //uart_puts(UART_ID,str);
             printf("Recibido por UART0: '%c'\n", recibido);    // Reporte por USB
         }
     }

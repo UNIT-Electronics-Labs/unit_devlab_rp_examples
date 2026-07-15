@@ -11,6 +11,7 @@ mi_proyecto/
 ├── main.c                      # Código fuente principal
 ├── CMakeLists.txt              # Configuración de compilación
 ├── pico_sdk_import.cmake       # Localizador del SDK
+├── picodev.toml                # Source Compilacion
 └── build/                      # Generado por CMake; no se versiona
     ├── main.elf
     ├── main.uf2
@@ -24,9 +25,9 @@ mi_proyecto/
 La herramienta `pico-new` genera automáticamente el `CMakeLists.txt` de cada proyecto siguiendo una plantilla fija, empleada de manera consistente a lo largo de todo el curso:
 
 ```cmake
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.20)
 
-include(pico_sdk_import.cmake)
+include("${CMAKE_CURRENT_LIST_DIR}/../pico_sdk_import.cmake")
 
 # ─────────────────────────────────────────────
 # CONFIGURACIÓN DEL PROYECTO
@@ -297,7 +298,8 @@ Cuando la lógica de un proyecto crece más allá de lo razonable para un único
 ```cmake
 set(PROJECT_SOURCES main.c sensor.c)
 ```
-
+pico_enable_stdio_usb(${PROJECT_NAME} 1)
+pico_enable_stdio_uart(${PROJECT_NAME} 0)
 ```c
 // sensor.h
 #ifndef SENSOR_H

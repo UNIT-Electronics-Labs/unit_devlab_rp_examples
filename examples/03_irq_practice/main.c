@@ -37,12 +37,13 @@ int main() {
     gpio_init(BUTTON_PIN);
     gpio_set_dir(BUTTON_PIN, GPIO_IN);
     gpio_pull_up(BUTTON_PIN);
+    
     gpio_set_irq_enabled_with_callback(
         BUTTON_PIN,
         GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE,
         true,
         &boton_callback
-    );
+    );          
 
     while (1) {
         // El nucleo queda libre para otras tareas; la deteccion

@@ -13,10 +13,11 @@ El periférico dispone de varias entradas posibles —los pines analógicos disp
 No se requiere ninguna conexión externa: el sensor de temperatura se encuentra integrado en el propio microcontrolador, en un canal del ADC que no está asociado a ningún pin físico.
  
 | Elemento | Pin del RP2040 | Descripción |
-|---|---|---|
+|---
 | Sensor de temperatura interno | Canal 4 del ADC (sin pin físico) | Integrado en el silicio del RP2040 |
 
 | GPIO | Canal ADC |
+|---|---|
 |26 | 0 |
 |27 | 1 |
 |28 | 2 |

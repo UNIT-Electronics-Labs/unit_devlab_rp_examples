@@ -15,23 +15,28 @@
 
 /* ─── Defines ──────────────────────────────────────────── */
 #define LED_PIN 10
-
+#define PWM_WRAP 255
 /* ─── Main ─────────────────────────────────────────────── */
 int main() {
     gpio_set_function(LED_PIN, GPIO_FUNC_PWM);
 
-    uint slice   = pwm_gpio_to_slice_num(LED_PIN);
+    // Configuración del slice y el canal específico para el LED
+
+    uint slice   = pwm_gpio_to_slice_num(LED_PIN);              
     uint channel = pwm_gpio_to_channel(LED_PIN);
 
     // Configuracion completa del slice, aunque esta practica solo
     // varie el nivel de un canal de forma gradual:
     pwm_config config = pwm_get_default_config();
-    pwm_config_set_clkdiv(&config, 100.0f);                  // Divisor de reloj
-    pwm_config_set_wrap(&config, 255);                        // Periodo del contador: 256 pasos (0-255)
-    pwm_config_set_phase_correct(&config, false);             // Conteo simple (no simetrico)
-    pwm_config_set_output_polarity(&config, false, false);    // Polaridad normal en ambos canales
+    pwm_config_set_clkdiv(&config, 100.0f);                  // Divisor de reloj 100 admite 8 bits 0-255
+    pwm_config_set_wrap(&config, PWM_WRAP);                        // Periodo del contador: 256 pasos (0-255) admie 16 bits 65535
+    pwm_config_set_phase_correct(&config, false);             // Conteo simple (no simetrico) De 0 a wrap - wrap a 0 falso
+    pwm_config_set_output_polarity(&config, false, false);    // Polaridad normal en ambos canales A y B
 
-    pwm_init(slice, &config, true);  // true = arrancar de inmediato
+    pwm_init(slice, &config, true);  // true = arrancar de inmediato , si es falso activar con pwm_set_enabled(slice, true)
+
+    pwm_set_chan_level(slice, channel, 0); // inicializar el canal a 0
+
 
     int nivel = 0;
     int paso = 5;
@@ -42,7 +47,7 @@ int main() {
         pwm_set_chan_level(slice, channel, (uint16_t)nivel);
 
         nivel += paso;
-        if (nivel >= 255) { nivel = 255; paso = -paso; }
+        if (nivel >= PWM_WRAP) { nivel = PWM_WRAP; paso = -paso; }
         else if (nivel <= 0) { nivel = 0; paso = -paso; }
 
         sleep_ms(15);

@@ -23,31 +23,10 @@ int main() {
     stdio_init_all();
 
     adc_init();
-    adc_set_clkdiv(0);                   // Divisor de reloj: 0 = velocidad maxima de conversion
 
-    // Sensor interno (canal 4), ya no se usa con el TMP235 externo:
-    // adc_set_temp_sensor_enabled(true);    // Habilita el canal interno de temperatura
-    // adc_select_input(4);                  // Selecciona el canal 4 (sensor interno)
-
-    // Canal externo (GPIO28 / ADC2): hay que inicializar el pin para uso
-    // analogico, deshabilitando sus resistencias de pull-up/pull-down y
-    // su buffer digital, ademas de seleccionar su canal en el mux del ADC:
     adc_gpio_init(TMP235_PIN);
     adc_select_input(2);                  // Canal 2 corresponde a GPIO28
 
-    // El periferico admite recorrer varios canales de manera automatica
-    // (round-robin) en lugar de seleccionarlos uno por uno; no es
-    // necesario aqui porque solo se utiliza un canal:
-    // adc_set_round_robin(0x1F);  // ejemplo: recorreria los canales 0 a 4
- 
-    // Las conversiones tambien pueden acumularse en una FIFO interna en
-    // lugar de leerse una por una con adc_read(); no es necesario aqui:
-    // adc_fifo_setup(true, false, 1, false, false);
- 
-    // El periferico puede generar una interrupcion al completar cada
-    // conversion, en lugar de que el programa consulte el resultado
-    // directamente; no es necesario aqui:
-    // adc_irq_set_enabled(false);
  
     while (1) {
         uint16_t muestra = adc_read();

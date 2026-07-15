@@ -14,6 +14,18 @@ El siguiente diagrama resume la configuración empleada en el código, y muestra
   <img src="../resources/spi_diagram.svg" width="600px" alt="Flujo de configuracion SPI y trama de bytes CS/SCK/MOSI/MISO para leer el CHIP_ID del BMI270">
 </div>
 
+Los 4 "modos SPI" resultantes
+La combinación de CPOL y CPHA da 4 modos estándar:
+ModoCPOLCPHA000101210311
+| Modo | CPOL | CPHA | Funcionamiento |
+|--|--|--|----------------|
+|0 | 0 | 0 | El bit más significativo se envía primero. |
+|1 | 0 | 1 | El bit menos significativo se envía primero. |
+|2 | 1 | 0 | El bit más significativo se envía primero. |
+|3 | 1 | 1 | El bit menos significativo se envía primero. |
+
+
+
 **Cálculo del tiempo de transacción.** Con un reloj SPI de 1 MHz, cada bit ocupa:
  
 ```
