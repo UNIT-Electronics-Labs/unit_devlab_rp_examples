@@ -1,0 +1,7 @@
+[pico]
+board = "pico"
+
+[build]
+name = "14_spibmi270_oled"
+build_dir = "build"
+sources = ["main.c","ssd1306.c"]

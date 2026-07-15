@@ -15,8 +15,8 @@
 #include "hardware/gpio.h"
 
 /* ─── Defines ──────────────────────────────────────────── */
-#define BUTTON_PIN 24
-
+//#define BUTTON_PIN 24                   //Boton Interno de la placa Pico (GPIO 24)
+#define BUTTON_PIN 15                  //Boton externo conectado al GPIO 15
 /* ─── Main ─────────────────────────────────────────────── */
 int main() {
     stdio_init_all();
@@ -24,7 +24,7 @@ int main() {
     gpio_init(BUTTON_PIN);
     gpio_set_dir(BUTTON_PIN, GPIO_IN);
     gpio_pull_up(BUTTON_PIN);
-
+    //gpio_pull_down(BUTTON_PIN);
     bool estado_anterior = gpio_get(BUTTON_PIN);
 
     while (1) {

@@ -14,17 +14,24 @@
 #include "hardware/gpio.h"
 
 /* ─── Defines ──────────────────────────────────────────── */
-#define LED_PIN 25
+#define LED_PIN 8
 
-/* ─── Main ─────────────────────────────────────────────── */
-int main() {
+void initPins() {
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
+}
+/* ─── Main ─────────────────────────────────────────────── */
+int main() {
+    initPins();
 
     while (1) {
         gpio_put(LED_PIN, 1);   // Enciende el LED
-        sleep_ms(100);         // Retardo de 1 segundo
+        //sleep_ms(1000);         // Retardo de 1 segundo
+        //sleep_us    (1000000);         // Retardo de 0.5 segundo
         gpio_put(LED_PIN, 0);   // Apaga el LED
-        sleep_ms(100);         // Retardo de 1 segundo
+        //sleep_ms(100);         // Retardo de 1 segundo
+        //sleep_us    (1000000);         // Retardo de 0.5 segundo
+
+
     }
 }

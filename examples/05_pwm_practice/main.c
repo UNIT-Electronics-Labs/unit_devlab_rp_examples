@@ -14,7 +14,7 @@
 #include "hardware/pwm.h"
 
 /* ─── Defines ──────────────────────────────────────────── */
-#define LED_PIN 25
+#define LED_PIN 10
 
 /* ─── Main ─────────────────────────────────────────────── */
 int main() {

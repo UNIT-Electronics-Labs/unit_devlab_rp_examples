@@ -32,10 +32,10 @@ El BMI270 admite hasta 10 MHz por SPI; se emplea 1 MHz de manera deliberadamente
  
 | Señal (BMI270) | Pin del RP2040 | Descripción |
 |---|---|---|
-| SCK | GPIO18 (SPI0 SCK) | Reloj del bus, generado por el RP2040 como maestro |
-| SDI (MOSI) | GPIO19 (SPI0 TX) | Datos del maestro hacia el esclavo |
-| SDO (MISO) | GPIO16 (SPI0 RX) | Datos del esclavo hacia el maestro |
-| CSB (CS) | GPIO17 | Selección de esclavo, activo en bajo, controlada por software |
+| SCL | GPIO2 (SPI0 SCK) | Reloj del bus, generado por el RP2040 como maestro |
+| SDA (MOSI) | GPIO3 (SPI0 TX) | Datos del maestro hacia el esclavo |
+| SDO (MISO) | GPIO4 (SPI0 RX) | Datos del esclavo hacia el maestro |
+| CSB (CS) | GPIO5 | Selección de esclavo, activo en bajo, controlada por software |
 | VDD / VDDIO | 3V3(OUT) | Alimentación del sensor |
 | GND | GND | Referencia de tierra común |
 

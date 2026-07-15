@@ -15,7 +15,7 @@
 #include "hardware/timer.h"
 
 /* ─── Defines ──────────────────────────────────────────── */
-#define LED_PIN        25
+#define LED_PIN        10
 #define INTERVALO_MS   500
 
 

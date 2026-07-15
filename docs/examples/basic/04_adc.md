@@ -16,6 +16,13 @@ No se requiere ninguna conexión externa: el sensor de temperatura se encuentra 
 |---|---|---|
 | Sensor de temperatura interno | Canal 4 del ADC (sin pin físico) | Integrado en el silicio del RP2040 |
 
+| GPIO | Canal ADC |
+|26 | 0 |
+|27 | 1 |
+|28 | 2 |
+|29 | 3 |
+| 4 | (sensor interno de temperatura, sin pin) |
+
 ## Configuración del Proyecto (CMake)
 
 ```cmake

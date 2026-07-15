@@ -6,7 +6,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/../pico_sdk_import.cmake")
 # CONFIGURACIÓN DEL PROYECTO
 # Generado automáticamente por picodev
 # ─────────────────────────────────────────────
-set(PROJECT_NAME    "blink")
+set(PROJECT_NAME    "00_blink_practice")
 set(PROJECT_SOURCES "main.c")
 set(PICO_BOARD      "pico")
 

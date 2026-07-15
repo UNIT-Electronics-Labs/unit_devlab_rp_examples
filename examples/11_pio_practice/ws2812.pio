@@ -1,0 +1,49 @@
+; ws2812.pio
+; Genera la trama de bits que exige el protocolo WS2812 (800 kHz) usando
+; side-set para alternar el pin de datos con la temporizacion exacta que
+; distingue un "0" de un "1" logico, sin intervencion del procesador.
+
+.program ws2812
+.side_set 1
+
+; Duracion de cada tramo, en ciclos de la maquina de estados (ver init):
+;   T1 -> tiempo en alto obligatorio para todo bit (arranca la trama)
+;   T2 -> tiempo en alto adicional solo para un "1"
+;   T3 -> tiempo en bajo que cierra el bit
+.define public T1 2
+.define public T2 5
+.define public T3 3
+
+.wrap_target
+bitloop:
+    out x, 1        side 0 [T3 - 1]  ; Extrae el siguiente bit del OSR
+    jmp !x do_zero  side 1 [T1 - 1]  ; Flanco alto comun a "0" y "1"
+do_one:
+    jmp  bitloop    side 1 [T2 - 1]  ; Prolonga el alto -> bit "1"
+do_zero:
+    nop             side 0 [T2 - 1]  ; Baja de inmediato -> bit "0"
+.wrap
+
+% c-sdk {
+static inline void ws2812_program_init(PIO pio, uint sm, uint offset, uint pin, float freq) {
+    pio_gpio_init(pio, pin);
+    pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
+
+    pio_sm_config config = ws2812_program_get_default_config(offset);
+    sm_config_set_sideset_pins(&config, pin);
+
+    // Cada pixel se envia como 24 bits (orden GRB); el shift es hacia la
+    // izquierda para que el bit mas significativo salga primero.
+    sm_config_set_out_shift(&config, false, true, 24);
+    sm_config_set_fifo_join(&config, PIO_FIFO_JOIN_TX);
+
+    // Un bit completo dura (T1 + T2 + T3) ciclos de la maquina de estados;
+    // el divisor de reloj ajusta esos ciclos a la frecuencia del protocolo.
+    int cycles_per_bit = ws2812_T1 + ws2812_T2 + ws2812_T3;
+    float div = clock_get_hz(clk_sys) / (freq * cycles_per_bit);
+    sm_config_set_clkdiv(&config, div);
+
+    pio_sm_init(pio, sm, offset, &config);
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}

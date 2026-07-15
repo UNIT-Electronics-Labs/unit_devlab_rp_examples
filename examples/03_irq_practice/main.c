@@ -16,7 +16,7 @@
 #include "hardware/irq.h"
 
 /* ─── Defines ──────────────────────────────────────────── */
-#define BUTTON_PIN 24
+#define BUTTON_PIN 15
 
 /* ─── Rutina de servicio de interrupcion (ISR) ────────────
  * Se ejecuta automaticamente cuando ocurre alguno de los

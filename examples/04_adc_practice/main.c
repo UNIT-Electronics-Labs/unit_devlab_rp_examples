@@ -16,6 +16,7 @@
 
 /* ─── Defines ──────────────────────────────────────────── */
 // #define MY_PIN 0
+#define TMP235_PIN 28   // GPIO28 = canal ADC 2
 
 /* ─── Main ─────────────────────────────────────────────── */
 int main() {
@@ -23,15 +24,17 @@ int main() {
 
     adc_init();
     adc_set_clkdiv(0);                   // Divisor de reloj: 0 = velocidad maxima de conversion
-    adc_set_temp_sensor_enabled(true);    // Habilita el canal interno de temperatura
-    adc_select_input(4);                  // Selecciona el canal 4 (sensor interno)
- 
-    // Si en cambio se empleara un canal externo (0 a 3, asociado a un pin
-    // fisico), seria indispensable inicializar antes ese pin para uso
+
+    // Sensor interno (canal 4), ya no se usa con el TMP235 externo:
+    // adc_set_temp_sensor_enabled(true);    // Habilita el canal interno de temperatura
+    // adc_select_input(4);                  // Selecciona el canal 4 (sensor interno)
+
+    // Canal externo (GPIO28 / ADC2): hay que inicializar el pin para uso
     // analogico, deshabilitando sus resistencias de pull-up/pull-down y
-    // su buffer digital:
-    // adc_gpio_init(26);  // GPIO26 corresponde al canal 0
- 
+    // su buffer digital, ademas de seleccionar su canal en el mux del ADC:
+    adc_gpio_init(TMP235_PIN);
+    adc_select_input(2);                  // Canal 2 corresponde a GPIO28
+
     // El periferico admite recorrer varios canales de manera automatica
     // (round-robin) en lugar de seleccionarlos uno por uno; no es
     // necesario aqui porque solo se utiliza un canal:
@@ -49,7 +52,9 @@ int main() {
     while (1) {
         uint16_t muestra = adc_read();
         float voltaje = muestra * 3.3f / 4096.0f;
-        float temperatura = 27.0f - (voltaje - 0.706f) / 0.001721f;
+        // Formula del sensor interno, ya no aplica con el TMP235 externo:
+        // float temperatura = 27.0f - (voltaje - 0.706f) / 0.001721f;
+        float temperatura = (voltaje - 0.5f) * 100.0f;   // Formula TMP235
 
         printf("Temperatura: %.2f C\n", temperatura);
         sleep_ms(1000);

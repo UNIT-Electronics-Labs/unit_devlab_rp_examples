@@ -1,0 +1,7 @@
+[pico]
+board = "pico"
+
+[build]
+name = "17_asmblinkbl"
+build_dir = "build"
+sources = ["main.c"]

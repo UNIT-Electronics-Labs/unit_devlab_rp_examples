@@ -7,12 +7,14 @@ include("${CMAKE_CURRENT_LIST_DIR}/../pico_sdk_import.cmake")
 # Generado automáticamente por picodev
 # ─────────────────────────────────────────────
 set(PROJECT_NAME    "10_multicore_practice")
-set(PROJECT_SOURCES "main.c")
+set(PROJECT_SOURCES "main.c" "ssd1306.c")
 set(PICO_BOARD      "pico")
 
 set(PROJECT_LIBS
     pico_stdlib
     pico_multicore
+    hardware_adc
+    hardware_i2c
 )
 # ─────────────────────────────────────────────
 # NO MODIFICAR DE AQUÍ EN ADELANTE

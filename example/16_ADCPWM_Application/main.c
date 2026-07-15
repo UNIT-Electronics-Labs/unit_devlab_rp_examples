@@ -87,9 +87,11 @@ int main(void) {
             snprintf(line_volt, sizeof(line_volt), "Volt: %.2f V", voltage);
 
             ssd1306_clear(&oled);
-            ssd1306_draw_string(&oled, 0, 0, 1, line_raw);
-            ssd1306_draw_string(&oled, 0, 20, 1, line_pct);
-            ssd1306_draw_string(&oled, 0, 40, 1, line_volt);
+            ssd1306_draw_string(&oled, 34, 0, 1, "ADC - PWM");
+            ssd1306_draw_line(&oled, 0, 10, 127, 10);
+            ssd1306_draw_string(&oled, 0, 20, 1, line_raw);
+            ssd1306_draw_string(&oled, 0, 34, 1, line_pct);
+            ssd1306_draw_string(&oled, 0, 48, 1, line_volt);
             ssd1306_show(&oled);
 
             next_refresh = make_timeout_time_ms(OLED_REFRESH_MS);
