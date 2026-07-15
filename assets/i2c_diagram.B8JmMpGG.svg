@@ -1,0 +1,98 @@
+<svg viewBox="0 0 860 760" xmlns="http://www.w3.org/2000/svg" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="860" height="760" fill="#FFFFFF"/>
+
+  <text x="430" y="20" text-anchor="middle" font-size="16" font-weight="bold" fill="#0F172A">Flujo de configuracion del escaner I2C</text>
+
+  <!-- Box 1: Inicio -->
+  <rect x="350" y="30" width="160" height="36" rx="18" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="53" text-anchor="middle" font-size="13" fill="#1E293B">Inicio</text>
+  <line x1="430" y1="66" x2="430" y2="86" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Box 2 -->
+  <rect x="150" y="86" width="560" height="40" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="110" text-anchor="middle" font-size="12.5" fill="#1E293B">baud_real = i2c_init(I2C_PORT, I2C_FREQ);</text>
+  <line x1="430" y1="126" x2="430" y2="146" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Box 3 -->
+  <rect x="150" y="146" width="560" height="56" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="168" text-anchor="middle" font-size="12.5" fill="#1E293B">gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);</text>
+  <text x="430" y="188" text-anchor="middle" font-size="12.5" fill="#1E293B">gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);</text>
+  <line x1="430" y1="202" x2="430" y2="222" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Box 4 -->
+  <rect x="150" y="222" width="560" height="56" rx="8" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="430" y="244" text-anchor="middle" font-size="12.5" fill="#1E293B">gpio_pull_up(I2C_SDA);</text>
+  <text x="430" y="264" text-anchor="middle" font-size="12.5" fill="#1E293B">gpio_pull_up(I2C_SCL);</text>
+  <line x1="430" y1="278" x2="430" y2="298" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Box 5 -->
+  <rect x="150" y="298" width="560" height="72" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="430" y="320" text-anchor="middle" font-size="12.5" fill="#1E293B">while (1) para direccion en 0x08..0x77:</text>
+  <text x="430" y="339" text-anchor="middle" font-size="12.5" fill="#1E293B">i2c_read_blocking(I2C_PORT, direccion, ...)</text>
+  <text x="430" y="358" text-anchor="middle" font-size="12.5" fill="#1E293B">si responde (ACK) → reportar direccion</text>
+
+  <path d="M 710 320 C 780 320, 780 358, 710 358" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="793" y="342" text-anchor="middle" font-size="11" fill="#475569">repite</text>
+
+  <line x1="40" y1="392" x2="820" y2="392" stroke="#CBD5E1" stroke-width="1"/>
+
+  <text x="430" y="417" text-anchor="middle" font-size="16" font-weight="bold" fill="#0F172A">Trama sobre el bus para una direccion (nivel de bits)</text>
+  <text x="430" y="437" text-anchor="middle" font-size="12" fill="#475569">Ejemplo: consulta de lectura a la direccion 0x3C (el OLED SSD1306), con dispositivo presente</text>
+
+  <text x="45" y="518" font-size="11" fill="#334155">1</text>
+  <text x="55" y="562" font-size="11" fill="#334155">0</text>
+
+  <!-- signal line -->
+  <polyline points="40,522 100,522 100,562 160,562 160,522 400,522 400,562 520,562 520,522 580,522 580,562 640,562 640,522 700,522"
+            fill="none" stroke="#2563EB" stroke-width="2.2"/>
+
+  <!-- segment guides -->
+  <line x1="100" y1="512" x2="100" y2="572" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="160" y1="512" x2="160" y2="572" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="220" y1="512" x2="220" y2="572" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="280" y1="512" x2="280" y2="572" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="340" y1="512" x2="340" y2="572" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="400" y1="512" x2="400" y2="572" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="460" y1="512" x2="460" y2="572" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="520" y1="512" x2="520" y2="572" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="580" y1="512" x2="580" y2="572" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+  <line x1="640" y1="512" x2="640" y2="572" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,3"/>
+
+  <!-- START / STOP markers -->
+  <text x="100" y="500" text-anchor="middle" font-size="11" fill="#DC2626">START</text>
+  <line x1="100" y1="504" x2="100" y2="512" stroke="#DC2626" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <text x="640" y="500" text-anchor="middle" font-size="11" fill="#DC2626">STOP</text>
+  <line x1="640" y1="504" x2="640" y2="512" stroke="#DC2626" stroke-width="1.3" marker-end="url(#arrow)"/>
+
+  <!-- bit labels -->
+  <text x="130" y="588" text-anchor="middle" font-size="12" fill="#334155">0</text>
+  <text x="190" y="588" text-anchor="middle" font-size="12" fill="#334155">1</text>
+  <text x="250" y="588" text-anchor="middle" font-size="12" fill="#334155">1</text>
+  <text x="310" y="588" text-anchor="middle" font-size="12" fill="#334155">1</text>
+  <text x="370" y="588" text-anchor="middle" font-size="12" fill="#334155">1</text>
+  <text x="430" y="588" text-anchor="middle" font-size="12" fill="#334155">0</text>
+  <text x="490" y="588" text-anchor="middle" font-size="12" fill="#334155">0</text>
+  <text x="550" y="588" text-anchor="middle" font-size="12" fill="#334155">1</text>
+  <text x="610" y="588" text-anchor="middle" font-size="12" fill="#334155">0</text>
+
+  <text x="130" y="606" text-anchor="middle" font-size="9.5" fill="#94A3B8">A6</text>
+  <text x="190" y="606" text-anchor="middle" font-size="9.5" fill="#94A3B8">A5</text>
+  <text x="250" y="606" text-anchor="middle" font-size="9.5" fill="#94A3B8">A4</text>
+  <text x="310" y="606" text-anchor="middle" font-size="9.5" fill="#94A3B8">A3</text>
+  <text x="370" y="606" text-anchor="middle" font-size="9.5" fill="#94A3B8">A2</text>
+  <text x="430" y="606" text-anchor="middle" font-size="9.5" fill="#94A3B8">A1</text>
+  <text x="490" y="606" text-anchor="middle" font-size="9.5" fill="#94A3B8">A0</text>
+  <text x="550" y="606" text-anchor="middle" font-size="9.5" fill="#94A3B8">R/W</text>
+  <text x="610" y="606" text-anchor="middle" font-size="9.5" fill="#94A3B8">ACK</text>
+
+  <text x="430" y="628" text-anchor="middle" font-size="11.5" fill="#475569">direccion (7 bits, MSB primero): 0111100 = 0x3C   ·   R/W = 1 (lectura)   ·   ACK = 0 (el esclavo reconoce)</text>
+
+  <text x="430" y="670" text-anchor="middle" font-size="13" font-weight="bold" fill="#0F172A">periodo de SCL a 400 kHz = 1 / 400 000 ≈ 2.5 µs/bit  →  9 bits (direccion+ACK) ≈ 22.5 µs sin dispositivo</text>
+  <text x="430" y="692" text-anchor="middle" font-size="11.5" fill="#334155">escaneo completo de 112 direcciones (0x08 a 0x77) ≈ entre 2.5 ms y 5 ms, segun cuantas respondan</text>
+</svg>

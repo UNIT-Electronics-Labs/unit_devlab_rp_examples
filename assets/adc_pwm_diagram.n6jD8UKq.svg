@@ -1,0 +1,92 @@
+<svg viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#333333"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="620" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="450" y="34" font-size="20" font-weight="bold" text-anchor="middle" fill="#1a1a1a">Vinculo ADC to PWM: Control de Brillo por Potenciometro</text>
+
+  <!-- ===================== CONFIG BLOCK (blue) ===================== -->
+  <rect x="40" y="60" width="820" height="160" rx="10" fill="#e8f0fe" stroke="#3b6fd6" stroke-width="2"/>
+  <text x="60" y="86" font-size="15" font-weight="bold" fill="#1e4699">Configuracion (una sola vez)</text>
+
+  <rect x="60" y="100" width="220" height="100" rx="8" fill="#ffffff" stroke="#3b6fd6" stroke-width="1.5"/>
+  <text x="170" y="124" font-size="13" font-weight="bold" text-anchor="middle" fill="#1e4699">ADC</text>
+  <text x="170" y="146" font-size="11.5" text-anchor="middle" fill="#333333">adc_init()</text>
+  <text x="170" y="164" font-size="11.5" text-anchor="middle" fill="#333333">adc_gpio_init(GPIO26)</text>
+  <text x="170" y="182" font-size="11.5" text-anchor="middle" fill="#333333">adc_select_input(0)</text>
+
+  <rect x="340" y="100" width="220" height="100" rx="8" fill="#ffffff" stroke="#3b6fd6" stroke-width="1.5"/>
+  <text x="450" y="124" font-size="13" font-weight="bold" text-anchor="middle" fill="#1e4699">PWM</text>
+  <text x="450" y="146" font-size="11.5" text-anchor="middle" fill="#333333">wrap = 999</text>
+  <text x="450" y="164" font-size="11.5" text-anchor="middle" fill="#333333">clkdiv = 125.0</text>
+  <text x="450" y="182" font-size="11.5" text-anchor="middle" fill="#333333">f_pwm = 1 kHz</text>
+
+  <rect x="620" y="100" width="220" height="100" rx="8" fill="#ffffff" stroke="#3b6fd6" stroke-width="1.5"/>
+  <text x="730" y="124" font-size="13" font-weight="bold" text-anchor="middle" fill="#1e4699">I2C / OLED</text>
+  <text x="730" y="146" font-size="11.5" text-anchor="middle" fill="#333333">i2c_init()</text>
+  <text x="730" y="164" font-size="11.5" text-anchor="middle" fill="#333333">ssd1306_init()</text>
+  <text x="730" y="182" font-size="11.5" text-anchor="middle" fill="#333333">GPIO4 SDA / GPIO5 SCL</text>
+
+  <!-- Arrow down to main loop -->
+  <line x1="450" y1="220" x2="450" y2="252" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===================== MAIN LOOP BLOCK (yellow) ===================== -->
+  <rect x="40" y="256" width="820" height="330" rx="10" fill="#fff8e1" stroke="#c9982a" stroke-width="2"/>
+  <text x="60" y="282" font-size="15" font-weight="bold" fill="#8a6300">Ciclo principal: while(1)</text>
+
+  <!-- Step 1: read ADC -->
+  <rect x="70" y="300" width="200" height="80" rx="8" fill="#ffffff" stroke="#c9982a" stroke-width="1.5"/>
+  <text x="170" y="326" font-size="12.5" font-weight="bold" text-anchor="middle" fill="#8a6300">1. Leer ADC</text>
+  <text x="170" y="346" font-size="11" text-anchor="middle" fill="#333333">adc_read()</text>
+  <text x="170" y="362" font-size="11" text-anchor="middle" fill="#333333">valor: 0 - 4095</text>
+
+  <line x1="270" y1="340" x2="325" y2="340" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Step 2: scale -->
+  <rect x="330" y="300" width="220" height="80" rx="8" fill="#ffffff" stroke="#c9982a" stroke-width="1.5"/>
+  <text x="440" y="326" font-size="12.5" font-weight="bold" text-anchor="middle" fill="#8a6300">2. Escalar rango</text>
+  <text x="440" y="346" font-size="11" text-anchor="middle" fill="#333333">duty = (adc x wrap) / 4095</text>
+  <text x="440" y="362" font-size="11" text-anchor="middle" fill="#333333">4095 to 999 pasos</text>
+
+  <line x1="550" y1="340" x2="605" y2="340" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Step 3: apply PWM -->
+  <rect x="610" y="300" width="220" height="80" rx="8" fill="#ffffff" stroke="#c9982a" stroke-width="1.5"/>
+  <text x="720" y="326" font-size="12.5" font-weight="bold" text-anchor="middle" fill="#8a6300">3. Aplicar duty</text>
+  <text x="720" y="346" font-size="11" text-anchor="middle" fill="#333333">pwm_set_gpio_level()</text>
+  <text x="720" y="362" font-size="11" text-anchor="middle" fill="#333333">LED en GPIO16</text>
+
+  <!-- down arrow to step 4 -->
+  <line x1="720" y1="380" x2="720" y2="410" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="720" y1="410" x2="200" y2="410" stroke="#333333" stroke-width="2"/>
+  <line x1="200" y1="410" x2="200" y2="430" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Step 4: decision -->
+  <polygon points="200,430 300,470 200,510 100,470" fill="#ffffff" stroke="#c9982a" stroke-width="1.5"/>
+  <text x="200" y="465" font-size="11" font-weight="bold" text-anchor="middle" fill="#8a6300">¿Paso ~150 ms</text>
+  <text x="200" y="480" font-size="11" font-weight="bold" text-anchor="middle" fill="#8a6300">cumplido?</text>
+
+  <text x="330" y="465" font-size="11" fill="#333333">No</text>
+  <line x1="300" y1="470" x2="800" y2="470" stroke="#333333" stroke-width="2"/>
+  <line x1="800" y1="470" x2="800" y2="336" stroke="#333333" stroke-width="2"/>
+  <line x1="800" y1="336" x2="830" y2="336" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <text x="215" y="525" font-size="11" fill="#333333">Si</text>
+  <line x1="200" y1="510" x2="200" y2="540" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Step 5: update OLED -->
+  <rect x="70" y="544" width="260" height="34" rx="8" fill="#ffffff" stroke="#c9982a" stroke-width="1.5"/>
+  <text x="200" y="566" font-size="11.5" font-weight="bold" text-anchor="middle" fill="#8a6300">4. Actualizar OLED (valor, %, V)</text>
+
+  <!-- loop back arrow from oled to step 1 (repeat while(1)) -->
+  <line x1="330" y1="561" x2="870" y2="561" stroke="#333333" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="870" y1="561" x2="870" y2="245" stroke="#333333" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="870" y1="245" x2="170" y2="245" stroke="#333333" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="170" y1="245" x2="170" y2="298" stroke="#333333" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+  <text x="500" y="240" font-size="10.5" fill="#666666" text-anchor="middle">se repite indefinidamente</text>
+</svg>
