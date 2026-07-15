@@ -99,7 +99,6 @@ Hello World desde USB
 Hello World desde USB
 ```
 
-![Verificacion Hello World USB](../resources/asm_hello_usb_verificacion.png)
 
 ## Errores Comunes y Variantes
 
